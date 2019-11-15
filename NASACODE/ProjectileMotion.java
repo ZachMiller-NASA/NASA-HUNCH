@@ -15,8 +15,9 @@ public class ProjectileMotion {
 		ArrayList<Double> angleOfFall = new ArrayList<Double>();
 		ArrayList<Double> distanceTraveled = new ArrayList<Double>();
 		ArrayList<Double> height = new ArrayList<Double>();
+		ArrayList<Double> time = new ArrayList<Double>();
 		
-		int time = 0;
+		int index = 0;
 		boolean closeToZero = false;
 		
 		
@@ -24,50 +25,73 @@ public class ProjectileMotion {
 		xVelocity.add(input.nextDouble());
 		
 		System.out.print("Y Velocity: ");
-		yVelocity.add(input.nextDouble());
+		yVelocity.add(-input.nextDouble());
+		
 		height.add(1000.0);
 		distanceTraveled.add(0.0);
+		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
+		time.add((double) index);
 		
-		time++;
+		index++;
 		while (!closeToZero) {	
 			
-			allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time);
-
-			closeToZero = (height.get(time) < 0) ? true : false;
-
-			time++;
-		}
-		time--;
-		
-		if (height.get(time) != 0) {
-			yVelocity.remove(time);
-			xVelocity.remove(time);
-			angleOfFall.remove(time);
-			height.remove(time);
-			distanceTraveled.remove(time);
+			time.add((double) index);
+			allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, 
+					index);
 			
-			double lastTime = calcForZeroHeight();
+			closeToZero = (height.get(index) < 0) ? true : false;
+
+			index++;
+		}
+		index--;
+		
+		if (height.get(index) != 0) {
+			yVelocity.remove(index);
+			xVelocity.remove(index);
+			angleOfFall.remove(index);
+			height.remove(index);
+			distanceTraveled.remove(index);
+			time.remove(index);
 			
+			index--;
+			
+			time.add(calcForZeroHeight(yVelocity, time, index, MOON_GRAVITY));
+			allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, 
+					index);
 		}
 		
-		System.out.printf("%s%10s%12s%19s%19s%n", "Time", "Height", "Distance", "X Velocity(m/s)",
+		System.out.printf("%5s%10s%12s%19s%19s%n", "Time", "Height", "Distance", "X Velocity(m/s)",
 				"Y Velocity(m/s)");
 
-		for (int x = 0; x < yVelocity.size(); x++) {
-			System.out.printf("%4d%10.2f%12.2f%19.2f%19.2f%n", x, height.get(x), distanceTraveled.get(x)
-					, xVelocity.get(x), yVelocity.get(x));
+		for (int x = 0; x < time.size(); x++) {
+			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%n", time.get(x), height.get(x), 
+					distanceTraveled.get(x), xVelocity.get(x), yVelocity.get(x));
 		}
 		
 		input.close();
 	}
 
-
-	private static double calcForZeroHeight() {
-		
-		return 0;
+	/**
+	 * @param yVelocity
+	 * @param index
+	 * @param MOON_GRAVITY
+	 * @return
+	 */
+	private static double calcForZeroHeight(ArrayList<Double> yVelocity, ArrayList<Double> time, 
+			int index, final double MOON_GRAVITY) {
+		return (((roundedVelocity(yVelocity, index) - roundedVelocity(yVelocity, index-1)) / 
+				MOON_GRAVITY) + (time.get(index)));
 	}
-
-
+	
+	/**
+	 * @param yVelocity
+	 * @param index
+	 * @return
+	 */
+	private static double roundedVelocity(ArrayList<Double> yVelocity, int index) {
+		return (Math.round(yVelocity.get(index)*100)/100);
+	}
+	
 	/**
 	 * @param MOON_GRAVITY
 	 * @param xVelocity
@@ -75,39 +99,42 @@ public class ProjectileMotion {
 	 * @param angleOfFall
 	 * @param distanceTraveled
 	 * @param height
-	 * @param time
+	 * @param index
 	 */
 	private static void allCalcs(final double MOON_GRAVITY, ArrayList<Double> xVelocity, 
 			ArrayList<Double> yVelocity, ArrayList<Double> angleOfFall,
-			ArrayList<Double> distanceTraveled, ArrayList<Double> height, int time) {
+			ArrayList<Double> distanceTraveled, ArrayList<Double> height, 
+			ArrayList<Double> time, int index) {
 		
-		yVelocity.add(yVelocity.get(time - 1) + MOON_GRAVITY * (time - (time - 1)));
-		xVelocity.add(xVelocity.get(time-1));
-		angleOfFall.add(calcAngle(xVelocity, yVelocity, time));
-		height.add(calcDistance(yVelocity, height, time));
-		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time));
+		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(index) - 
+				time.get(index - 1)));
+		xVelocity.add(xVelocity.get(index-1));
+		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
+		height.add(calcDistance(yVelocity, height, time, index));
+		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index));
 	}
 
 
 	/**
 	 * @param xVelocity
 	 * @param yVelocity
-	 * @param time
-	 * @return
+	 * @param index
+	 * @return the angle of fall
 	 */
-	private static double calcAngle(ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, int time) {
-		return Math.toDegrees(Math.atan((yVelocity.get(time) / xVelocity.get(time))));
+	private static double calcAngle(ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, 
+			int index) {
+		return Math.toDegrees(Math.atan((yVelocity.get(index) / xVelocity.get(index))));
 	}
 	
 	/**
 	 * @param velocity
 	 * @param distanceTraveled
-	 * @param time
+	 * @param index
 	 * @return the distance traveled
 	 */
 	private static double calcDistance(ArrayList<Double> velocity, ArrayList<Double> distanceTraveled,
-			int time) {
-		return (.5 * (velocity.get(time) + velocity.get(time - 1)) * (time - (time - 1))) +
-				distanceTraveled.get(time - 1);
+			ArrayList<Double> time, int index) {
+		return (.5 * (velocity.get(index) + velocity.get(index - 1)) * (time.get(index) - 
+				time.get(index - 1))) + distanceTraveled.get(index - 1);
 	}
 }
