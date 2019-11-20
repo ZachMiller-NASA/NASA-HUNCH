@@ -245,4 +245,3 @@ public class SimDriver extends Application {
 		t.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 	}
 }
->>>>>>> ab5176164540cd81e8deaf15557035a9f3c290db:SimDriver.java
