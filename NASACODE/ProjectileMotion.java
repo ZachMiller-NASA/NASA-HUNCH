@@ -56,8 +56,11 @@ public class ProjectileMotion {
 			index--;
 			
 			time.add(calcForZeroHeight(yVelocity, time, index, MOON_GRAVITY));
+			
+			int timeIndex = index+1;
+			
 			allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, 
-					index);
+					index, timeIndex);
 		}
 		
 		System.out.printf("%5s%10s%12s%19s%19s%n", "Time", "Height", "Distance", "X Velocity(m/s)",
@@ -71,11 +74,14 @@ public class ProjectileMotion {
 		input.close();
 	}
 
+
+	
+
 	/**
 	 * @param yVelocity
 	 * @param index
 	 * @param MOON_GRAVITY
-	 * @return
+	 * @return TIME FOR ZERO HEIGHT
 	 */
 	private static double calcForZeroHeight(ArrayList<Double> yVelocity, ArrayList<Double> time, 
 			int index, final double MOON_GRAVITY) {
@@ -86,10 +92,10 @@ public class ProjectileMotion {
 	/**
 	 * @param yVelocity
 	 * @param index
-	 * @return
+	 * @return velocity rounded to nearest hundredth place
 	 */
 	private static double roundedVelocity(ArrayList<Double> yVelocity, int index) {
-		return (Math.round(yVelocity.get(index)*100)/100);
+		return Math.round(yVelocity.get(index)*100)/100.0;
 	}
 	
 	/**
@@ -115,6 +121,18 @@ public class ProjectileMotion {
 	}
 
 
+	private static void allCalcs(final double MOON_GRAVITY, ArrayList<Double> xVelocity, 
+			ArrayList<Double> yVelocity, ArrayList<Double> angleOfFall,
+			ArrayList<Double> distanceTraveled, ArrayList<Double> height, ArrayList<Double> time,
+			int index, int timeIndex) {
+		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(timeIndex) - 
+				time.get(index)));
+		xVelocity.add(xVelocity.get(index-1));
+		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
+		height.add(calcDistance(yVelocity, height, time, index, timeIndex));
+		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index, timeIndex));
+	}
+	
 	/**
 	 * @param xVelocity
 	 * @param yVelocity
@@ -136,5 +154,11 @@ public class ProjectileMotion {
 			ArrayList<Double> time, int index) {
 		return (.5 * (velocity.get(index) + velocity.get(index - 1)) * (time.get(index) - 
 				time.get(index - 1))) + distanceTraveled.get(index - 1);
+	}
+	
+	private static Double calcDistance(ArrayList<Double> velocity, ArrayList<Double> distanceTraveled,
+			ArrayList<Double> time, int index, int timeIndex) {
+		return (.5 * (velocity.get(index) + velocity.get(index - 1)) * (time.get(timeIndex) - 
+				time.get(index))) + distanceTraveled.get(index - 1);
 	}
 }
