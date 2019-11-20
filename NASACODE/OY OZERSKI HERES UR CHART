@@ -1,0 +1,45 @@
+@SuppressWarnings({ "rawtypes", "unchecked" })
+	private LineChart createChart(ArrayList<Double> xData, ArrayList<Double> yData,
+			String xLabel, String yLabel) {
+		
+			//Initializing maxes & mins
+			double yMax = yData.get(0);
+			double yMin = yData.get(0);
+			double xMin = xData.get(0);
+			double xMax = xData.get(0);
+			
+			//Finding maxes & mins
+			for (int count = 1; count < xData.size(); count++) {
+				if (yMax < yData.get(count))
+					yMax = yData.get(count);
+				if (yMin > yData.get(count))
+					yMin = yData.get(count);
+				
+				if (xMax < xData.get(count))
+					xMax = xData.get(count);
+				if (xMin > xData.get(count))
+					xMin = xData.get(count);
+			}
+			
+			//Generating increments using data & adjusting mins, maxes
+			double yIncrement = (int)((yMax - yMin) * (0.15));
+			double xIncrement = (int) ((xMax - xMin) * (0.1));
+			
+			//Defining axis
+			NumberAxis xAxis = new NumberAxis(xMin, xMax, xIncrement);
+			NumberAxis yAxis = new NumberAxis(yMin, yMax, yIncrement);
+			xAxis.setLabel(xLabel);
+			yAxis.setLabel(yLabel);
+			
+			//Creating LineChart
+			LineChart chart = new LineChart(xAxis, yAxis);
+			XYChart.Series series = new XYChart.Series();
+			for (int count = 0; count < xData.size(); count++) {
+				series.getData().add(new XYChart.Data(xData.get(count), yData.get(count)));
+			}
+			chart.getData().add(series);	
+			
+			
+			
+		return chart;
+	}
