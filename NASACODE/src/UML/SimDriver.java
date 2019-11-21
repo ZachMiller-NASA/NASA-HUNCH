@@ -1,14 +1,25 @@
-
 package UML;
 
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -18,6 +29,7 @@ public class SimDriver extends Application {
 		launch(args);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start(Stage primaryStage) {
 		// title
 		primaryStage.setTitle("NASA Simulator");
@@ -27,10 +39,36 @@ public class SimDriver extends Application {
 		Label variables = new Label("\t\tCustomizations");
 		variables.setFont(Font.font("Rockwell", 20));
 
-		Label chart = new Label("Chart");
-		chart.setFont(Font.font("Rockwell", 20));
-		center(chart);
-
+		//Data so chart can display. Phase this out when connecting projectile motion
+		ArrayList<Double> xData = new ArrayList<Double>();
+		ArrayList<Double> yData = new ArrayList<Double>();
+		for (int count = 0; count <= 10; count++) {
+			xData.add((double) count);
+			yData.add(3000 - Math.pow(count, 2.105));
+		}
+		
+		//Chart stuff
+		Label chartTxt = new Label("Chart\nCustomizations");
+		chartTxt.setFont(Font.font("Rockwell", 20));
+		
+		//creating combo boxes for chart
+		ObservableList<String> options = FXCollections.observableArrayList (
+				"Altitude",
+				"Time",
+				"Distance",
+				"Temperature",
+				"Force",
+				"Speed",
+				"Descent Angle"
+				);
+		final ComboBox xCombo = new ComboBox(options);
+		final ComboBox yCombo = new ComboBox(options);
+		xCombo.setValue("Time");
+		yCombo.setValue("Altitude");
+		LineChart chart = createChart(xData, yData,
+				(String) xCombo.getValue(),(String) yCombo.getValue());
+		
+		//report stuff
 		Label report = new Label("Report");
 		report.setFont(Font.font("Rockwell", 20));
 		center(report);
@@ -55,7 +93,16 @@ public class SimDriver extends Application {
 		Label oldTime = new Label("Time(s)");
 		Label oldSurvival = new Label("Pod Survival");
 		
-		// Text fields
+		//Buttons
+		Button exitBtn = new Button("Exit");
+		exitBtn.setMinSize(324, 80);
+		exitBtn.setOnAction(btnPress -> primaryStage.close());
+		
+		Button startBtn = new Button("Start");
+		startBtn.setMinSize(324, 80);
+		
+		Button resetBtn = new Button("Reset");
+		resetBtn.setMinSize(324, 80);
 		
 		// drop height entry box
 		TextField dropHeight = new TextField();
@@ -97,8 +144,6 @@ public class SimDriver extends Application {
 		String cssLayout = "-fx-border-color: black;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
 				+ "-fx-border-style: solid;\n";
 
-		// Panes
-
 		// add the name of the variables into left inner
 		VBox leftInner = new VBox();
 		//leftInner.setStyle(cssLayout);
@@ -132,7 +177,7 @@ public class SimDriver extends Application {
 		HBox containLRInner = new HBox(leftInner,innerMiddle,rightInner);
 
 		// ENTIRE LEFT BOX
-		VBox leftHold = new VBox(title, containLRInner);
+		VBox leftHold = new VBox(title, containLRInner, startBtn, resetBtn, exitBtn);
 		leftHold.setStyle(cssLayout);
 		leftHold.setMinWidth(330);
 
@@ -165,21 +210,68 @@ public class SimDriver extends Application {
 		topRight.setStyle(cssLayout);
 		topRight.setMaxHeight(210);
 		topRight.setMinHeight(210);
+		
 		//************************************************************************************\\
+		//Bottom Right Right
+		VBox bottomRightRight = new VBox();
+		bottomRightRight.getChildren().add(chart);
+		
+		//Combo box graph updating code
+		xCombo.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue ov, String t, String t1) {
+				String xLabel = t1;
+				LineChart chartUpdate = createChart(xData, yData, xLabel, (String) yCombo.getValue());
+				bottomRightRight.getChildren().remove(0);
+				bottomRightRight.getChildren().add(chartUpdate);
+			}
+		});
+		
+		yCombo.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue ov, String t, String t1) {
+				if (t1 != xCombo.getValue()) {
+					LineChart chartUpdate = createChart(xData, yData, (String) xCombo.getValue(), t1);
+					bottomRightRight.getChildren().remove(0);
+					bottomRightRight.getChildren().add(chartUpdate);
+				}
+				else {
+				}
+			}
+		});
+
+		//Combo labels
+		Label xComboTxt = new Label("x-axis");
+		Label yComboTxt = new Label("y-axis");
+		
+		//Spacing region
+		Region space = new Region();
+		space.setPadding(new Insets(10, 0, 10, 0));
+		
+		//Bottom Right Left Bottom
+		VBox brlb = new VBox(xComboTxt, xCombo, space, yComboTxt, yCombo);
+		brlb.setPadding(new Insets(10, 0, 10, 0));
+		
+		//Bottom Right Left
+		VBox bottomRightLeft = new VBox();
+		bottomRightLeft.getChildren().addAll(chartTxt, brlb);
+		
 		// bottom right chart box
 		HBox bottomRight = new HBox();
-		bottomRight.getChildren().addAll(chart);
+		bottomRight.getChildren().addAll(bottomRightLeft, bottomRightRight);
 		bottomRight.setStyle(cssLayout);
 		bottomRight.setMaxHeight(300);
 		bottomRight.setMinHeight(300);
-
+		
+		//Right side
 		VBox rightHold = new VBox(topRight, bottomRight);
 		rightHold.setAlignment(Pos.CENTER);
 		rightHold.setMinWidth(670);
 
-		// just holds the 2 v boxes
+		// just holds the 2 main VBoxes
 		HBox hold = new HBox(leftHold, rightHold);
 
+		//Final stuff
 		Scene scene = new Scene(hold, 1000, 500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -206,10 +298,10 @@ public class SimDriver extends Application {
 		final int BOTTOM = 20;
 		final int LEFT = 5;
 		
-		t.setMargin(a,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
-		t.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(c,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
-		t.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
+		VBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
+		VBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 	}
 	public void space(HBox t,Label a,Label b,Label c,Label d) {
 		final int TOP = 20;
@@ -217,10 +309,10 @@ public class SimDriver extends Application {
 		final int BOTTOM = 20;
 		final int LEFT = 20;
 		
-		t.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 	}
 	public void space(VBox t,TextField a,TextField b,TextField c,TextField d) {
 		final int TOP = 20;
@@ -228,10 +320,10 @@ public class SimDriver extends Application {
 		final int BOTTOM = 13;
 		final int LEFT = 5;
 		
-		t.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(d,new Insets(TOP,RIGHT,BOTTOM-1,LEFT));
+		VBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM-1,LEFT));
 	}
 	public void space(HBox t,TextField a,TextField b,TextField c,TextField d) {
 		final int TOP = 20;
@@ -239,9 +331,67 @@ public class SimDriver extends Application {
 		final int BOTTOM = 20;
 		final int LEFT = 20;
 		
-		t.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		t.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		HBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+	}
+	
+	/*
+	 * Takes two Double ArrayLists and two Strings as arguments
+	 * Returns a LineChart
+	 * Used to create a LineChart based on the data sent to it
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private LineChart createChart(ArrayList<Double> xData, ArrayList<Double> yData,
+			String xLabel, String yLabel) {
+		
+			//Initializing maxes & mins
+			double yMax = yData.get(0);
+			double yMin = yData.get(0);
+			double xMin = xData.get(0);
+			double xMax = xData.get(0);
+			
+			//Finding maxes & mins
+			for (int count = 1; count < xData.size(); count++) {
+				if (yMax < yData.get(count))
+					yMax = yData.get(count);
+				if (yMin > yData.get(count))
+					yMin = yData.get(count);
+				
+				if (xMax < xData.get(count))
+					xMax = xData.get(count);
+				if (xMin > xData.get(count))
+					xMin = xData.get(count);
+			}
+			
+			//Generating increments using data & adjusting minimums, maximums
+			double yIncrement = (int)((yMax - yMin) * (0.15));
+			double xIncrement = (int) ((xMax - xMin) * (0.1));
+			
+			//0 Adjustment
+			if (xMin < xMax * .2 && xMin > 0)
+				xMin = 0;
+			if (yMin < yMax * .2 && yMin > 0)
+				yMin = 0;
+			
+			//Defining axis
+			NumberAxis xAxis = new NumberAxis(xMin, xMax, xIncrement);
+			NumberAxis yAxis = new NumberAxis(yMin, yMax, yIncrement);
+			xAxis.setLabel(xLabel);
+			yAxis.setLabel(yLabel);
+			
+			//Creating LineChart
+			LineChart chart = new LineChart(xAxis, yAxis);
+			XYChart.Series series = new XYChart.Series();
+			for (int count = 0; count < xData.size(); count++) {
+				series.getData().add(new XYChart.Data(xData.get(count), yData.get(count)));
+			}
+			chart.getData().add(series);	
+			chart.setMinSize(465, 320);
+			chart.setMaxSize(465, 320);
+			chart.setTitle("Chart");
+			
+		return chart;
 	}
 }
