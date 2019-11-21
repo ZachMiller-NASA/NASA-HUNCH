@@ -22,14 +22,13 @@ public class ProjectileMotion {
 			ArrayList<Double> yVelocity, ArrayList<Double> angleOfFall,
 			ArrayList<Double> distanceTraveled, ArrayList<Double> height, 
 			ArrayList<Double> time, int index) {
-		
+
 		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(index) - 
 				time.get(index - 1)));
-		xVelocity.add(xVelocity.get(index-1));
+		xVelocity.add(xVelocity.get(index - 1));
 		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
 		height.add(calcDistance(yVelocity, height, time, index));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index));
-		
 	}
 
 	/**
@@ -47,17 +46,13 @@ public class ProjectileMotion {
 			ArrayList<Double> yVelocity, ArrayList<Double> angleOfFall,
 			ArrayList<Double> distanceTraveled, ArrayList<Double> height, ArrayList<Double> time,
 			int index, int timeIndex) {
+		
 		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(timeIndex) - 
 				time.get(index)));
-		
-		
-		
-		xVelocity.add(xVelocity.get(index-1));
+		xVelocity.add(xVelocity.get(index - 1));
 		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
 		height.add(calcDistance(yVelocity, height, time, index, timeIndex));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index, timeIndex));
-		
-		
 	}
 	
 	/**
@@ -105,7 +100,7 @@ public class ProjectileMotion {
 	 */
 	protected double calcTimeAtZeroHeight(ArrayList<Double> yVelocity, ArrayList<Double> time, 
 			int index, final double MOON_GRAVITY) {
-		return (((roundedVelocity(yVelocity, index) - roundedVelocity(yVelocity, index-1)) / 
+		return (((roundedVelocity(yVelocity, index) - roundedVelocity(yVelocity, index - 1)) /
 				MOON_GRAVITY) + (time.get(index)));
 	}
 	
@@ -115,6 +110,6 @@ public class ProjectileMotion {
 	 * @return velocity rounded to nearest hundredth place
 	 */
 	protected double roundedVelocity(ArrayList<Double> yVelocity, int index) {
-		return Math.round(yVelocity.get(index)*100)/100.0;
+		return Math.round(yVelocity.get(index) * 100) / 100.0;
 	}
 }
