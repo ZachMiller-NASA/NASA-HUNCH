@@ -68,6 +68,9 @@ public class SimDriver extends Application {
 		LineChart chart = createChart(xData, yData,
 				(String) xCombo.getValue(),(String) yCombo.getValue());
 		
+		//report padding
+		Insets reportPadding = new Insets(7, 0, 7, 0);
+		
 		//report stuff
 		Label report = new Label("Report");
 		report.setFont(Font.font("Rockwell", 20));
@@ -84,14 +87,22 @@ public class SimDriver extends Application {
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
 		Label newTemp = new Label("Max Temp(°C)");
+		newTemp.setPadding(reportPadding);
 		Label newForce = new Label("Max Force(N)");
+		newForce.setPadding(reportPadding);
 		Label newTime = new Label("Time(s)");
+		newTime.setPadding(reportPadding);
 		Label newSurvival = new Label("Pod Survival");
+		newSurvival.setPadding(reportPadding);
 		
 		Label oldTemp = new Label("Max Temp(°C)");
+		oldTemp.setPadding(reportPadding);
 		Label oldForce = new Label("Max Force(N)");
+		oldForce.setPadding(reportPadding);
 		Label oldTime = new Label("Time(s)");
+		oldTime.setPadding(reportPadding);
 		Label oldSurvival = new Label("Pod Survival");
+		oldSurvival.setPadding(reportPadding);
 		
 		//Buttons
 		Button exitBtn = new Button("Exit");
@@ -116,6 +127,8 @@ public class SimDriver extends Application {
 		// initial x velocity entry box
 		TextField InitialX = new TextField();  
 		txtSize(InitialX);
+		
+		
 		// the new information is stored in these
 		TextField newTempBox = new TextField();
 		newTempBox.setDisable(true);
@@ -128,6 +141,7 @@ public class SimDriver extends Application {
 		
 		TextField newSurvivalBox = new TextField();
 		newSurvivalBox.setDisable(true);
+		
 		// The old information is stored in these
 		TextField oldTempBox = new TextField();
 		oldTempBox.setDisable(true);
@@ -140,8 +154,11 @@ public class SimDriver extends Application {
 		
 		TextField oldSurvivalBox = new TextField();
 		oldSurvivalBox.setDisable(true);
+		
 		// CSS
 		String cssLayout = "-fx-border-color: black;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
+				+ "-fx-border-style: solid;\n";
+		String cssLayout2 = "-fx-border-color: LavenderBlush;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
 				+ "-fx-border-style: solid;\n";
 
 		// add the name of the variables into left inner
@@ -182,25 +199,33 @@ public class SimDriver extends Application {
 		leftHold.setMinWidth(330);
 
 		//************************************************************************************\\
+		
+		//report text field padding
+		Insets reportTxtBoxPadding = new Insets(5,0,5,0);
+		
 		// top right left 
 		HBox reportTitle = new HBox();
 		reportTitle.getChildren().addAll(report);
 		
 		VBox topROne =new VBox(); 
 		topROne.getChildren().addAll(newTemp,newForce,newTime,newSurvival);
-		topROne.setStyle(cssLayout);
+		topROne.setStyle(cssLayout2);
 		
 		VBox topRTwo =new VBox();
 		topRTwo.getChildren().addAll(newTempBox,newForceBox,newTimeBox,newSurvivalBox);
-		topRTwo.setStyle(cssLayout);
+		topRTwo.setStyle(cssLayout2);
+		VBox.setMargin(newTempBox, reportTxtBoxPadding);
+		VBox.setMargin(newTimeBox, reportTxtBoxPadding);
 		
 		VBox topRThree =new VBox(); 
 		topRThree.getChildren().addAll(oldTemp,oldForce,oldTime,oldSurvival);
-		topRThree.setStyle(cssLayout);
+		topRThree.setStyle(cssLayout2);
 		
 		VBox topRFour =new VBox();
 		topRFour.getChildren().addAll(oldTempBox,oldForceBox,oldTimeBox,oldSurvivalBox);
-		topRFour.setStyle(cssLayout);
+		topRFour.setStyle(cssLayout2);
+		VBox.setMargin(oldTempBox, reportTxtBoxPadding);
+		VBox.setMargin(oldTimeBox, reportTxtBoxPadding);
 		
 		HBox holdTopRight = new HBox(topROne,topRTwo,topRThree,topRFour);
 		
@@ -220,8 +245,7 @@ public class SimDriver extends Application {
 		xCombo.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
-				String xLabel = t1;
-				LineChart chartUpdate = createChart(xData, yData, xLabel, (String) yCombo.getValue());
+				LineChart chartUpdate = createChart(xData, yData, t1, (String) yCombo.getValue());
 				bottomRightRight.getChildren().remove(0);
 				bottomRightRight.getChildren().add(chartUpdate);
 			}
@@ -230,13 +254,9 @@ public class SimDriver extends Application {
 		yCombo.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
-				if (t1 != xCombo.getValue()) {
-					LineChart chartUpdate = createChart(xData, yData, (String) xCombo.getValue(), t1);
-					bottomRightRight.getChildren().remove(0);
-					bottomRightRight.getChildren().add(chartUpdate);
-				}
-				else {
-				}
+				LineChart chartUpdate = createChart(xData, yData, (String) xCombo.getValue(), t1);
+				bottomRightRight.getChildren().remove(0);
+				bottomRightRight.getChildren().add(chartUpdate);
 			}
 		});
 
@@ -256,9 +276,13 @@ public class SimDriver extends Application {
 		VBox bottomRightLeft = new VBox();
 		bottomRightLeft.getChildren().addAll(chartTxt, brlb);
 		
+		//Spacing for bottomRight
+		Region space2 = new Region();
+		space2.setPadding(new Insets(0, 10, 0, 10));
+		
 		// bottom right chart box
 		HBox bottomRight = new HBox();
-		bottomRight.getChildren().addAll(bottomRightLeft, bottomRightRight);
+		bottomRight.getChildren().addAll(space2, bottomRightLeft, bottomRightRight);
 		bottomRight.setStyle(cssLayout);
 		bottomRight.setMaxHeight(300);
 		bottomRight.setMinHeight(300);
