@@ -104,16 +104,22 @@ public class SimDriver extends Application {
 		Label oldSurvival = new Label("Pod Survival");
 		oldSurvival.setPadding(reportPadding);
 		
-		//Buttons
+		// Buttons
 		Button exitBtn = new Button("Exit");
 		exitBtn.setMinSize(324, 80);
 		exitBtn.setOnAction(btnPress -> primaryStage.close());
-		
+		exitBtn.setStyle("-fx-background-color: Crimson");
+		exitBtn.setFont(buttonsFont);
+
 		Button startBtn = new Button("Start");
 		startBtn.setMinSize(324, 80);
-		
+		startBtn.setStyle("-fx-background-color: LawnGreen");
+		startBtn.setFont(buttonsFont);
+
 		Button resetBtn = new Button("Reset");
 		resetBtn.setMinSize(324, 80);
+		resetBtn.setStyle("-fx-background-color: #00ced1");
+		resetBtn.setFont(buttonsFont);
 		
 		// drop height entry box
 		TextField dropHeight = new TextField();
@@ -299,6 +305,29 @@ public class SimDriver extends Application {
 		Scene scene = new Scene(hold, 1000, 500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
+		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
+			// the new boxes was
+			oldTempBox.setText(newTempBox.getText());
+			oldForceBox.setText(newForceBox.getText());
+			oldTimeBox.setText(newTimeBox.getText());
+			oldSurvivalBox.setText(newSurvivalBox.getText());
+			// clears the new boxes for a new set of data
+			newTempBox.clear();
+			newForceBox.clear();
+			newTimeBox.clear();
+			newSurvivalBox.clear();
+			//clears data entry boxes
+			dropHeight.clear();
+			spinSpeed.clear();
+			InitialX.clear();
+			InitialY.clear();
+			
+			 LineChart chartNew = createChart(xData, yData, (String) xCombo.getValue(), (String) yCombo.getValue());
+			 
+			 xCombo.setValue("Time");
+			 yCombo.setValue("Altitude");
+		});		
 	}
 
 // centers the reports and the chart labels
