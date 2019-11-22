@@ -22,6 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SimDriver extends Application {
@@ -104,7 +106,7 @@ public class SimDriver extends Application {
 		Label oldSurvival = new Label("Pod Survival");
 		oldSurvival.setPadding(reportPadding);
 		
-		Font buttonsFont = Font.font("ComicSans", FontWeight.EXTRA_BOLD ,20);
+		Font buttonsFont = Font.font("Comic Sans MS", FontWeight.EXTRA_BOLD ,20);
 		
 		// Buttons
 		Button exitBtn = new Button("Exit");
@@ -166,7 +168,7 @@ public class SimDriver extends Application {
 		// CSS
 		String cssLayout = "-fx-border-color: black;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
 				+ "-fx-border-style: solid;\n";
-		String cssLayout2 = "-fx-border-color: LavenderBlush;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
+		String cssLayout2 = "-fx-border-color: transparent;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
 				+ "-fx-border-style: solid;\n";
 
 		// add the name of the variables into left inner
@@ -245,9 +247,16 @@ public class SimDriver extends Application {
 		topRight.setMinHeight(210);
 		
 		//************************************************************************************\\
+		
+		//Chart title label
+		Label chartTitle = new Label("Chart");
+		chartTitle.setFont(Font.font("Rockwell", 20));
+		chartTitle.setTranslateX(230);
+		
+		
 		//Bottom Right Right
 		VBox bottomRightRight = new VBox();
-		bottomRightRight.getChildren().add(chart);
+		bottomRightRight.getChildren().addAll(chartTitle, chart);
 		
 		//Combo box graph updating code
 		xCombo.valueProperty().addListener(new ChangeListener<String>() {
@@ -307,6 +316,7 @@ public class SimDriver extends Application {
 		Scene scene = new Scene(hold, 1000, 500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
 			// the new boxes was
@@ -442,10 +452,13 @@ public class SimDriver extends Application {
 			for (int count = 0; count < xData.size(); count++) {
 				series.getData().add(new XYChart.Data(xData.get(count), yData.get(count)));
 			}
+			
 			chart.getData().add(series);	
 			chart.setMinSize(465, 320);
 			chart.setMaxSize(465, 320);
-			chart.setTitle("Chart");
+			
+			
+			
 			
 		return chart;
 	}
