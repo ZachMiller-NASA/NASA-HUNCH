@@ -104,6 +104,8 @@ public class SimDriver extends Application {
 		Label oldSurvival = new Label("Pod Survival");
 		oldSurvival.setPadding(reportPadding);
 		
+		Font buttonsFont = Font.font("ComicSans", FontWeight.EXTRA_BOLD ,20);
+		
 		// Buttons
 		Button exitBtn = new Button("Exit");
 		exitBtn.setMinSize(324, 80);
