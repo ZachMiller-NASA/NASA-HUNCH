@@ -23,7 +23,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SimDriver extends Application {
@@ -88,23 +87,19 @@ public class SimDriver extends Application {
 		Label mpsOne = new Label("m/s");
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
-		Label newTemp = new Label("Max Temp(°C)");
-		newTemp.setPadding(reportPadding);
-		Label newForce = new Label("Max Force(N)");
-		newForce.setPadding(reportPadding);
-		Label newTime = new Label("Time(s)");
-		newTime.setPadding(reportPadding);
-		Label newSurvival = new Label("Pod Survival");
-		newSurvival.setPadding(reportPadding);
+		Label temp = new Label("Max Temp(°C)");
+		temp.setPadding(reportPadding);
+		Label force = new Label("Max Force(N)");
+		force.setPadding(reportPadding);
+		Label time = new Label("Time(sec)");
+		time.setPadding(reportPadding);
+		Label survival = new Label("Pod Survival");
+		survival.setPadding(reportPadding);
 		
-		Label oldTemp = new Label("Max Temp(°C)");
-		oldTemp.setPadding(reportPadding);
-		Label oldForce = new Label("Max Force(N)");
-		oldForce.setPadding(reportPadding);
-		Label oldTime = new Label("Time(s)");
-		oldTime.setPadding(reportPadding);
-		Label oldSurvival = new Label("Pod Survival");
-		oldSurvival.setPadding(reportPadding);
+		Label impact = new Label("Angle of Impact");
+		impact.setPadding(reportPadding);
+		Label distance = new Label("Distance Travelled");
+		distance.setPadding(reportPadding);
 		
 		Font buttonsFont = Font.font("Comic Sans MS", FontWeight.EXTRA_BOLD ,20);
 		
@@ -140,30 +135,24 @@ public class SimDriver extends Application {
 		
 		
 		// the new information is stored in these
-		TextField newTempBox = new TextField();
-		newTempBox.setDisable(true);
+		TextField tempBox = new TextField();
+		tempBox.setDisable(true);
 		
-		TextField newForceBox = new TextField();
-		newForceBox.setDisable(true);
+		TextField forceBox = new TextField();
+		forceBox.setDisable(true);
 		
-		TextField newTimeBox = new TextField();
-		newTimeBox.setDisable(true);
+		TextField timeBox = new TextField();
+		timeBox.setDisable(true);
 		
-		TextField newSurvivalBox = new TextField();
-		newSurvivalBox.setDisable(true);
+		TextField survivalBox = new TextField();
+		survivalBox.setDisable(true);
 		
-		// The old information is stored in these
-		TextField oldTempBox = new TextField();
-		oldTempBox.setDisable(true);
+		TextField impactBox = new TextField();
+		impactBox.setDisable(true);
 		
-		TextField oldForceBox = new TextField();
-		oldForceBox.setDisable(true);
+		TextField distanceBox = new TextField();
+		distanceBox.setDisable(true);
 		
-		TextField oldTimeBox = new TextField();
-		oldTimeBox.setDisable(true);
-		
-		TextField oldSurvivalBox = new TextField();
-		oldSurvivalBox.setDisable(true);
 		
 		// CSS
 		String cssLayout = "-fx-border-color: black;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
@@ -218,24 +207,28 @@ public class SimDriver extends Application {
 		reportTitle.getChildren().addAll(report);
 		
 		VBox topROne =new VBox(); 
-		topROne.getChildren().addAll(newTemp,newForce,newTime,newSurvival);
+		topROne.getChildren().addAll(temp,force,time,survival);
 		topROne.setStyle(cssLayout2);
 		
 		VBox topRTwo =new VBox();
-		topRTwo.getChildren().addAll(newTempBox,newForceBox,newTimeBox,newSurvivalBox);
+		topRTwo.getChildren().addAll(tempBox,forceBox,timeBox,survivalBox);
 		topRTwo.setStyle(cssLayout2);
-		VBox.setMargin(newTempBox, reportTxtBoxPadding);
-		VBox.setMargin(newTimeBox, reportTxtBoxPadding);
+		VBox.setMargin(tempBox, reportTxtBoxPadding);
+		VBox.setMargin(timeBox, reportTxtBoxPadding);
+		VBox.setMargin(impactBox, reportTxtBoxPadding);
 		
 		VBox topRThree =new VBox(); 
-		topRThree.getChildren().addAll(oldTemp,oldForce,oldTime,oldSurvival);
+		topRThree.getChildren().addAll(impact,distance);
 		topRThree.setStyle(cssLayout2);
 		
 		VBox topRFour =new VBox();
-		topRFour.getChildren().addAll(oldTempBox,oldForceBox,oldTimeBox,oldSurvivalBox);
+		
+		topRFour.getChildren().addAll(impactBox,distanceBox);
+		
+		topRFour.getChildren().addAll();
 		topRFour.setStyle(cssLayout2);
-		VBox.setMargin(oldTempBox, reportTxtBoxPadding);
-		VBox.setMargin(oldTimeBox, reportTxtBoxPadding);
+		
+		VBox.setMargin(impactBox, reportTxtBoxPadding);
 		
 		HBox holdTopRight = new HBox(topROne,topRTwo,topRThree,topRFour);
 		
@@ -263,7 +256,7 @@ public class SimDriver extends Application {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
 				LineChart chartUpdate = createChart(xData, yData, t1, (String) yCombo.getValue());
-				bottomRightRight.getChildren().remove(0);
+				bottomRightRight.getChildren().remove(1);
 				bottomRightRight.getChildren().add(chartUpdate);
 			}
 		});
@@ -320,15 +313,15 @@ public class SimDriver extends Application {
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
 			// the new boxes was
-			oldTempBox.setText(newTempBox.getText());
-			oldForceBox.setText(newForceBox.getText());
-			oldTimeBox.setText(newTimeBox.getText());
-			oldSurvivalBox.setText(newSurvivalBox.getText());
+			//oldTempBox.setText(newTempBox.getText());
+			//oldForceBox.setText(newForceBox.getText());
+			//oldTimeBox.setText(newTimeBox.getText());
+			//oldSurvivalBox.setText(newSurvivalBox.getText());
 			// clears the new boxes for a new set of data
-			newTempBox.clear();
-			newForceBox.clear();
-			newTimeBox.clear();
-			newSurvivalBox.clear();
+			tempBox.clear();
+			forceBox.clear();
+			timeBox.clear();
+			survivalBox.clear();
 			//clears data entry boxes
 			dropHeight.clear();
 			spinSpeed.clear();
@@ -336,6 +329,8 @@ public class SimDriver extends Application {
 			InitialY.clear();
 			
 			 LineChart chartNew = createChart(xData, yData, (String) xCombo.getValue(), (String) yCombo.getValue());
+			 bottomRightRight.getChildren().remove(1);
+			 bottomRightRight.getChildren().add(chartNew);
 			 
 			 xCombo.setValue("Time");
 			 yCombo.setValue("Altitude");
