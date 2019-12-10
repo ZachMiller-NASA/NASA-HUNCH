@@ -1,7 +1,7 @@
 package UML;
 
-
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -310,6 +310,9 @@ public class SimDriver extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
+		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
+		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
+		startBtn.setOnAction(e -> checkToCalc(dropHeight, spinSpeed, InitialY, InitialX));
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
 			// the new boxes was
@@ -337,7 +340,93 @@ public class SimDriver extends Application {
 		});		
 	}
 
-// centers the reports and the chart labels
+	private void checkToCalc(TextField dropHeight, TextField spinSpeed, TextField yVelocity,
+			TextField xVelocity) {
+		try {
+			double height = Double.parseDouble(dropHeight.getText());
+			double spin = Double.parseDouble(spinSpeed.getText());
+			double yVel = Double.parseDouble(yVelocity.getText());
+			double xVel = Double.parseDouble(xVelocity.getText());
+
+			calcProjectileMotion(height, spin, yVel, xVel);
+		} catch(InputMismatchException mismatch) {
+			System.out.println("Must be a number");
+		} catch(NumberFormatException numForm) {
+			System.out.println("Must be a number");
+		}
+		
+	}
+
+	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel) {
+		final double MOON_GRAVITY = -1.62;
+
+		ProjectileMotion motion = new ProjectileMotion();
+		ArrayList<Double> xVelocity = new ArrayList<Double>();
+		ArrayList<Double> yVelocity = new ArrayList<Double>();
+		ArrayList<Double> angleOfFall = new ArrayList<Double>();
+		ArrayList<Double> distanceTraveled = new ArrayList<Double>();
+		ArrayList<Double> height = new ArrayList<Double>();
+		ArrayList<Double> time = new ArrayList<Double>();
+
+		int index = 0;
+		int timeIndex = 0;
+		boolean closeToZero = false;
+
+		
+		xVelocity.add(xVel);
+		yVelocity.add(-yVel);
+
+		height.add(altitude);
+		distanceTraveled.add(0.0);
+		angleOfFall.add(motion.calcAngle(xVelocity, yVelocity, index));
+		time.add((double) index);
+
+		index++;
+		while (!closeToZero) {
+
+			time.add((double) index);
+
+			motion.allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, index);
+
+			closeToZero = (height.get(index) < 0) ? true : false;
+
+			index++;
+		}
+		index--;
+
+		if (height.get(index) != 0) {
+			yVelocity.remove(index);
+			xVelocity.remove(index);
+			angleOfFall.remove(index);
+			height.remove(index);
+			distanceTraveled.remove(index);
+			time.remove(index);
+
+			index--;
+
+			time.add(motion.calcTimeAtZeroHeight(yVelocity, time, index, MOON_GRAVITY));
+
+			timeIndex = index + 1;
+
+			motion.allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, index,
+					timeIndex);
+		}
+
+		System.out.printf("%5s%10s%12s%19s%19s%17s%n", "Time", "Height", "Distance", "X Velocity(m/s)",
+				"Y Velocity(m/s)", "Angle of Fall");
+
+		// Distance of fall now at 0
+		for (int x = 0; x < time.size() - 1; x++) {
+			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", time.get(x), height.get(x),
+					distanceTraveled.get(x), xVelocity.get(x), yVelocity.get(x), angleOfFall.get(x));
+		}
+
+		// how far will it roll
+		System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", time.get(time.size() - 1), 0.0,
+				distanceTraveled.get(time.size() - 1), xVelocity.get(time.size() - 1), 0.0, 0.0);
+	}
+
+	// centers the reports and the chart labels
 	/**
 	 * 
 	 * @param t
