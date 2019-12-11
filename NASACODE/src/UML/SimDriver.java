@@ -48,6 +48,14 @@ public class SimDriver extends Application {
 			yData.add(3000 - Math.pow(count, 2.105));
 		}
 		
+		//PROJECTILE MOTION ARRAYLISTS
+		ArrayList<Double> xVelocity = new ArrayList<Double>();
+		ArrayList<Double> yVelocity = new ArrayList<Double>();
+		ArrayList<Double> angleOfFall = new ArrayList<Double>();
+		ArrayList<Double> distanceTraveled = new ArrayList<Double>();
+		ArrayList<Double> height = new ArrayList<Double>();
+		ArrayList<Double> currentTime = new ArrayList<Double>();
+		
 		//Chart stuff
 		Label chartTxt = new Label("Chart\nCustomizations");
 		chartTxt.setFont(Font.font("Rockwell", 20));
@@ -312,7 +320,8 @@ public class SimDriver extends Application {
 		
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
-		startBtn.setOnAction(e -> checkToCalc(dropHeight, spinSpeed, InitialY, InitialX));
+		startBtn.setOnAction(e -> checkToCalc(dropHeight, spinSpeed, InitialY, InitialX, 
+				xVelocity, yVelocity, height, distanceTraveled, angleOfFall, currentTime));
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
 			// the new boxes was
@@ -340,15 +349,20 @@ public class SimDriver extends Application {
 		});		
 	}
 
-	private void checkToCalc(TextField dropHeight, TextField spinSpeed, TextField yVelocity,
-			TextField xVelocity) {
+	private void checkToCalc(TextField dropHeight, TextField spinSpeed, TextField yVelocityText,
+			TextField xVelocityText, ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, 
+			ArrayList<Double> height, ArrayList<Double> distanceTraveled, 
+			ArrayList<Double> angleOfFall, ArrayList<Double> time) {
 		try {
-			double height = Double.parseDouble(dropHeight.getText());
-			double spin = Double.parseDouble(spinSpeed.getText());
-			double yVel = Double.parseDouble(yVelocity.getText());
-			double xVel = Double.parseDouble(xVelocity.getText());
-
-			calcProjectileMotion(height, spin, yVel, xVel);
+			double initialHeight = Double.parseDouble(dropHeight.getText());
+			double initialSpin = Double.parseDouble(spinSpeed.getText());
+			double yVel = Double.parseDouble(yVelocityText.getText());
+			double xVel = Double.parseDouble(xVelocityText.getText());
+			if(initialHeight < yVel)
+				System.out.println("Y velocity can\'t be equal to or greater than height.");
+			else
+				calcProjectileMotion(initialHeight, initialSpin, yVel, xVel, xVelocity, yVelocity,
+						height, distanceTraveled, angleOfFall, time);
 		} catch(InputMismatchException mismatch) {
 			System.out.println("Must be a number");
 		} catch(NumberFormatException numForm) {
@@ -357,16 +371,13 @@ public class SimDriver extends Application {
 		
 	}
 
-	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel) {
+	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel, 
+			ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, ArrayList<Double> height, 
+			ArrayList<Double> distanceTraveled, ArrayList<Double> angleOfFall, 
+			ArrayList<Double> time) {
 		final double MOON_GRAVITY = -1.62;
 
 		ProjectileMotion motion = new ProjectileMotion();
-		ArrayList<Double> xVelocity = new ArrayList<Double>();
-		ArrayList<Double> yVelocity = new ArrayList<Double>();
-		ArrayList<Double> angleOfFall = new ArrayList<Double>();
-		ArrayList<Double> distanceTraveled = new ArrayList<Double>();
-		ArrayList<Double> height = new ArrayList<Double>();
-		ArrayList<Double> time = new ArrayList<Double>();
 
 		int index = 0;
 		int timeIndex = 0;
