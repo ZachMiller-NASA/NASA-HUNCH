@@ -2,7 +2,6 @@ package UML;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -106,7 +105,7 @@ public class SimDriver extends Application {
 		
 		Label impact = new Label("Angle of Impact");
 		impact.setPadding(reportPadding);
-		Label distance = new Label("Distance Travelled");
+		Label distance = new Label("Distance Travelled(m)");
 		distance.setPadding(reportPadding);
 		
 		Font buttonsFont = Font.font("Comic Sans MS", FontWeight.EXTRA_BOLD ,20);
@@ -320,15 +319,17 @@ public class SimDriver extends Application {
 		
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
-		startBtn.setOnAction(e -> checkToCalc(dropHeight, spinSpeed, InitialY, InitialX, 
-				xVelocity, yVelocity, height, distanceTraveled, angleOfFall, currentTime));
+		startBtn.setOnAction(e ->{ 
+			checkToCalc(dropHeight, spinSpeed, InitialY, InitialX, 
+				xVelocity, yVelocity, height, distanceTraveled, angleOfFall, currentTime);
+			
+			distanceBox.setText(String.format("%.2f",distanceTraveled.get(distanceTraveled.size()-1)));
+			timeBox.setText(String.format("%.2f", currentTime.get(currentTime.size()-1)));
+			impactBox.setText(String.format("%.2f", angleOfFall.get(angleOfFall.size()-1)));
+		});
 		
-		resetBtn.setOnAction(btnPress -> {// Sets the new boxes equal null and the old boxes equal to what the value of
-			// the new boxes was
-			//oldTempBox.setText(newTempBox.getText());
-			//oldForceBox.setText(newForceBox.getText());
-			//oldTimeBox.setText(newTimeBox.getText());
-			//oldSurvivalBox.setText(newSurvivalBox.getText());
+		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
+		
 			// clears the new boxes for a new set of data
 			tempBox.clear();
 			forceBox.clear();
