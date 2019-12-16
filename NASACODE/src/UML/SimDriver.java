@@ -24,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+
 public class SimDriver extends Application {
 	public static void main(String[] args) {
 		launch(args);
@@ -38,22 +39,6 @@ public class SimDriver extends Application {
 		// Title labels 
 		Label variables = new Label("\t\tCustomizations");
 		variables.setFont(Font.font("Rockwell", 20));
-
-		//Data so chart can display. Phase this out when connecting projectile motion
-		ArrayList<Double> xData = new ArrayList<Double>();
-		ArrayList<Double> yData = new ArrayList<Double>();
-		for (int count = 0; count <= 10; count++) {
-			xData.add((double) count);
-			yData.add(3000 - Math.pow(count, 2.105));
-		}
-		
-		//PROJECTILE MOTION ARRAYLISTS
-		ArrayList<Double> xVelocity = new ArrayList<Double>();
-		ArrayList<Double> yVelocity = new ArrayList<Double>();
-		ArrayList<Double> angleOfFall = new ArrayList<Double>();
-		ArrayList<Double> distanceTraveled = new ArrayList<Double>();
-		ArrayList<Double> height = new ArrayList<Double>();
-		ArrayList<Double> currentTime = new ArrayList<Double>();
 		
 		//Chart stuff
 		Label chartTxt = new Label("Chart\nCustomizations");
@@ -73,8 +58,6 @@ public class SimDriver extends Application {
 		final ComboBox yCombo = new ComboBox(options);
 		xCombo.setValue("Time");
 		yCombo.setValue("Altitude");
-		LineChart chart = createChart(xData, yData,
-				(String) xCombo.getValue(),(String) yCombo.getValue());
 		
 		//report padding
 		Insets reportPadding = new Insets(7, 0, 7, 0);
@@ -256,24 +239,45 @@ public class SimDriver extends Application {
 		
 		//Bottom Right Right
 		VBox bottomRightRight = new VBox();
-		bottomRightRight.getChildren().addAll(chartTitle, chart);
+		Label chartSubstitute = new Label("Please enter data\nto see a graph");
+		chartSubstitute.setPadding(new Insets(50,0,100,100));
+		chartSubstitute.setFont(Font.font("Rockwell", 40));
+		bottomRightRight.getChildren().addAll(chartTitle, chartSubstitute);
 		
 		//Combo box graph updating code
 		xCombo.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
-				LineChart chartUpdate = createChart(xData, yData, t1, (String) yCombo.getValue());
-				bottomRightRight.getChildren().remove(1);
-				bottomRightRight.getChildren().add(chartUpdate);
+				LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
+						Data.retrieve(yCombo.getValue()),
+						t1, (String) yCombo.getValue());
+				if (t1 == (String) yCombo.getValue()) { //if both boxes are on same option
+					bottomRightRight.getChildren().remove(1);
+					chartSubstitute.setText("Please select\ndiffering axes");
+					bottomRightRight.getChildren().add(chartSubstitute);
+				}
+				else {
+					bottomRightRight.getChildren().remove(1);
+					bottomRightRight.getChildren().add(chartUpdate);
+				}
 			}
 		});
 		
 		yCombo.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue ov, String t, String t1) {
-				LineChart chartUpdate = createChart(xData, yData, (String) xCombo.getValue(), t1);
-				bottomRightRight.getChildren().remove(0);
-				bottomRightRight.getChildren().add(chartUpdate);
+				LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
+						Data.retrieve(yCombo.getValue()),
+						(String) xCombo.getValue(), t1);
+				if (t1 == (String) xCombo.getValue()) { //if both boxes are on same option
+					bottomRightRight.getChildren().remove(1);
+					chartSubstitute.setText("Please select\ndiffering axes");
+					bottomRightRight.getChildren().add(chartSubstitute);
+				}
+				else {
+					bottomRightRight.getChildren().remove(1);
+					bottomRightRight.getChildren().add(chartUpdate);
+				}
 			}
 		});
 
@@ -286,7 +290,7 @@ public class SimDriver extends Application {
 		space.setPadding(new Insets(10, 0, 10, 0));
 		
 		//Bottom Right Left Bottom
-		VBox brlb = new VBox(xComboTxt, xCombo, space, yComboTxt, yCombo);
+		VBox brlb = new VBox(yComboTxt, yCombo, space, xComboTxt, xCombo);
 		brlb.setPadding(new Insets(10, 0, 10, 0));
 		
 		//Bottom Right Left
@@ -320,12 +324,17 @@ public class SimDriver extends Application {
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
 		startBtn.setOnAction(e ->{ 
-			checkToCalc(dropHeight, spinSpeed, InitialY, InitialX, 
-				xVelocity, yVelocity, height, distanceTraveled, angleOfFall, currentTime);
+			checkToCalc(dropHeight, spinSpeed, InitialY, InitialX);
+			LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
+					Data.retrieve(yCombo.getValue()),
+					(String) xCombo.getValue(), (String) yCombo.getValue());
+			bottomRightRight.getChildren().remove(1);
+			bottomRightRight.getChildren().add(chartUpdate);
 			
-			distanceBox.setText(String.format("%.2f",distanceTraveled.get(distanceTraveled.size()-1)));
-			timeBox.setText(String.format("%.2f", currentTime.get(currentTime.size()-1)));
-			impactBox.setText(String.format("%.2f", angleOfFall.get(angleOfFall.size()-1)));
+			distanceBox.setText(String.format("%.2f",
+					Data.distanceTraveled.get(Data.distanceTraveled.size()-1)));
+			timeBox.setText(String.format("%.2f", Data.currentTime.get(Data.currentTime.size()-1)));
+			impactBox.setText(String.format("%.2f", Data.angleOfFall.get(Data.angleOfFall.size()-1)));
 		});
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
@@ -341,19 +350,27 @@ public class SimDriver extends Application {
 			InitialX.clear();
 			InitialY.clear();
 			
-			 LineChart chartNew = createChart(xData, yData, (String) xCombo.getValue(), (String) yCombo.getValue());
-			 bottomRightRight.getChildren().remove(1);
-			 bottomRightRight.getChildren().add(chartNew);
-			 
-			 xCombo.setValue("Time");
-			 yCombo.setValue("Altitude");
+			//Resetting combo boxes to default
+			xCombo.setValue("Time");
+			yCombo.setValue("Altitude");
+			
+			//Resetting chart to text
+			bottomRightRight.getChildren().remove(1);
+			chartSubstitute.setText("Please enter data\nto see a graph");
+			bottomRightRight.getChildren().add(chartSubstitute);
+			
+			//clearing ArrayLists
+			Data.currentTime.clear();
+			Data.angleOfFall.clear();
+			Data.height.clear();
+			Data.distanceTraveled.clear();
+			Data.xVelocity.clear();
+			Data.yVelocity.clear();
 		});		
 	}
 
 	private void checkToCalc(TextField dropHeight, TextField spinSpeed, TextField yVelocityText,
-			TextField xVelocityText, ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, 
-			ArrayList<Double> height, ArrayList<Double> distanceTraveled, 
-			ArrayList<Double> angleOfFall, ArrayList<Double> time) {
+			TextField xVelocityText) {
 		try {
 			double initialHeight = Double.parseDouble(dropHeight.getText());
 			double initialSpin = Double.parseDouble(spinSpeed.getText());
@@ -362,8 +379,7 @@ public class SimDriver extends Application {
 			if(initialHeight < yVel)
 				System.out.println("Y velocity can\'t be equal to or greater than height.");
 			else
-				calcProjectileMotion(initialHeight, initialSpin, yVel, xVel, xVelocity, yVelocity,
-						height, distanceTraveled, angleOfFall, time);
+				calcProjectileMotion(initialHeight, initialSpin, yVel, xVel);
 		} catch(InputMismatchException mismatch) {
 			System.out.println("Must be a number");
 		} catch(NumberFormatException numForm) {
@@ -372,10 +388,7 @@ public class SimDriver extends Application {
 		
 	}
 
-	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel, 
-			ArrayList<Double> xVelocity, ArrayList<Double> yVelocity, ArrayList<Double> height, 
-			ArrayList<Double> distanceTraveled, ArrayList<Double> angleOfFall, 
-			ArrayList<Double> time) {
+	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel) {
 		final double MOON_GRAVITY = -1.62;
 
 		ProjectileMotion motion = new ProjectileMotion();
@@ -385,42 +398,42 @@ public class SimDriver extends Application {
 		boolean closeToZero = false;
 
 		
-		xVelocity.add(xVel);
-		yVelocity.add(-yVel);
+		Data.xVelocity.add(xVel);
+		Data.yVelocity.add(-yVel);
 
-		height.add(altitude);
-		distanceTraveled.add(0.0);
-		angleOfFall.add(motion.calcAngle(xVelocity, yVelocity, index));
-		time.add((double) index);
+		Data.height.add(altitude);
+		Data.distanceTraveled.add(0.0);
+		Data.angleOfFall.add(motion.calcAngle(Data.xVelocity, Data.yVelocity, index));
+		Data.currentTime.add((double) index);
 
 		index++;
 		while (!closeToZero) {
 
-			time.add((double) index);
+			Data.currentTime.add((double) index);
 
-			motion.allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, index);
+			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, Data.distanceTraveled, Data.height, Data.currentTime, index);
 
-			closeToZero = (height.get(index) < 0) ? true : false;
+			closeToZero = (Data.height.get(index) < 0) ? true : false;
 
 			index++;
 		}
 		index--;
 
-		if (height.get(index) != 0) {
-			yVelocity.remove(index);
-			xVelocity.remove(index);
-			angleOfFall.remove(index);
-			height.remove(index);
-			distanceTraveled.remove(index);
-			time.remove(index);
+		if (Data.height.get(index) != 0) {
+			Data.yVelocity.remove(index);
+			Data.xVelocity.remove(index);
+			Data.angleOfFall.remove(index);
+			Data.height.remove(index);
+			Data.distanceTraveled.remove(index);
+			Data.currentTime.remove(index);
 
 			index--;
 
-			time.add(motion.calcTimeAtZeroHeight(yVelocity, time, index, MOON_GRAVITY));
+			Data.currentTime.add(motion.calcTimeAtZeroHeight(Data.yVelocity, Data.currentTime, index, MOON_GRAVITY));
 
 			timeIndex = index + 1;
 
-			motion.allCalcs(MOON_GRAVITY, xVelocity, yVelocity, angleOfFall, distanceTraveled, height, time, index,
+			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, Data.distanceTraveled, Data.height, Data.currentTime, index,
 					timeIndex);
 		}
 
@@ -428,14 +441,14 @@ public class SimDriver extends Application {
 				"Y Velocity(m/s)", "Angle of Fall");
 
 		// Distance of fall now at 0
-		for (int x = 0; x < time.size() - 1; x++) {
-			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", time.get(x), height.get(x),
-					distanceTraveled.get(x), xVelocity.get(x), yVelocity.get(x), angleOfFall.get(x));
+		for (int x = 0; x < Data.currentTime.size() - 1; x++) {
+			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", Data.currentTime.get(x), Data.height.get(x),
+					Data.distanceTraveled.get(x), Data.xVelocity.get(x), Data.yVelocity.get(x), Data.angleOfFall.get(x));
 		}
 
 		// how far will it roll
-		System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", time.get(time.size() - 1), 0.0,
-				distanceTraveled.get(time.size() - 1), xVelocity.get(time.size() - 1), 0.0, 0.0);
+		System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", Data.currentTime.get(Data.currentTime.size() - 1), 0.0,
+				Data.distanceTraveled.get(Data.currentTime.size() - 1), Data.xVelocity.get(Data.currentTime.size() - 1), 0.0, 0.0);
 	}
 
 	// centers the reports and the chart labels
@@ -527,7 +540,7 @@ public class SimDriver extends Application {
 			}
 			
 			//Generating increments using data & adjusting minimums, maximums
-			double yIncrement = (int)((yMax - yMin) * (0.15));
+			double yIncrement = (int)((yMax - yMin) * (0.2));
 			double xIncrement = (int) ((xMax - xMin) * (0.1));
 			
 			//0 Adjustment
@@ -549,6 +562,7 @@ public class SimDriver extends Application {
 				series.getData().add(new XYChart.Data(xData.get(count), yData.get(count)));
 			}
 			
+			chart.setTranslateY(-17);
 			chart.getData().add(series);	
 			chart.setMinSize(465, 320);
 			chart.setMaxSize(465, 320);
