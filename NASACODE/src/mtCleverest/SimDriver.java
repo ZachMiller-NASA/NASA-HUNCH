@@ -77,7 +77,7 @@ public class SimDriver extends Application {
 		Label mpsOne = new Label("m/s");
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
-		Label temp = new Label("Max Temp(°C)");
+		Label temp = new Label("Max Temp(ï¿½C)");
 		temp.setPadding(reportPadding);
 		Label force = new Label("Max Force(N)");
 		force.setPadding(reportPadding);
@@ -97,17 +97,18 @@ public class SimDriver extends Application {
 		Button exitBtn = new Button("Exit");
 		exitBtn.setMinSize(324, 80);
 		exitBtn.setOnAction(btnPress -> primaryStage.close());
-		exitBtn.setStyle("-fx-background-color: Crimson");
+		exitBtn.setStyle("-fx-background-color: #F36A6A");
 		exitBtn.setFont(buttonsFont);
-
+//***************************************************************************************************************************************************************************************
 		Button startBtn = new Button("Start");
 		startBtn.setMinSize(324, 80);
-		startBtn.setStyle("-fx-background-color: LawnGreen");
+	//	startBtn.setMaxSize(maxWidth, maxHeight);
+		startBtn.setStyle("-fx-background-color: #9BEC85");
 		startBtn.setFont(buttonsFont);
 
 		Button resetBtn = new Button("Reset");
 		resetBtn.setMinSize(324, 80);
-		resetBtn.setStyle("-fx-background-color: #00ced1");
+		resetBtn.setStyle("-fx-background-color: #85ECE9");
 		resetBtn.setFont(buttonsFont);
 		
 		// drop height entry box
@@ -126,22 +127,22 @@ public class SimDriver extends Application {
 		
 		// the new information is stored in these
 		TextField tempBox = new TextField();
-		tempBox.setDisable(true);
+		tempBox.setEditable(false);
 		
 		TextField forceBox = new TextField();
-		forceBox.setDisable(true);
+		forceBox.setEditable(false);
 		
 		TextField timeBox = new TextField();
-		timeBox.setDisable(true);
+		timeBox.setEditable(false);
 		
 		TextField survivalBox = new TextField();
-		survivalBox.setDisable(true);
+		survivalBox.setEditable(false);
 		
 		TextField impactBox = new TextField();
-		impactBox.setDisable(true);
+		impactBox.setEditable(false);
 		
 		TextField distanceBox = new TextField();
-		distanceBox.setDisable(true);
+		distanceBox.setEditable(false);
 		
 		
 		// CSS
@@ -335,6 +336,7 @@ public class SimDriver extends Application {
 					Data.distanceTraveled.get(Data.distanceTraveled.size()-1)));
 			timeBox.setText(String.format("%.2f", Data.currentTime.get(Data.currentTime.size()-1)));
 			impactBox.setText(String.format("%.2f", Data.angleOfFall.get(Data.angleOfFall.size()-1)));
+			
 		});
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
@@ -572,4 +574,6 @@ public class SimDriver extends Application {
 			
 		return chart;
 	}
+	
+	
 }
