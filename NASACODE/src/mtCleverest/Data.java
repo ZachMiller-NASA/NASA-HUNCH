@@ -1,4 +1,4 @@
-package UML;
+package mtCleverest;
 
 import java.lang.Math;
 import java.util.ArrayList;
