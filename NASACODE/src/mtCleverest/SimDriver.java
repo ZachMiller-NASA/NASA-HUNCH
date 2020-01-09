@@ -413,7 +413,8 @@ public class SimDriver extends Application {
 
 			Data.currentTime.add((double) index);
 
-			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, Data.distanceTraveled, Data.height, Data.currentTime, index);
+			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, 
+					Data.distanceTraveled, Data.height, Data.currentTime, index);
 
 			closeToZero = (Data.height.get(index) < 0) ? true : false;
 
@@ -430,8 +431,12 @@ public class SimDriver extends Application {
 			Data.currentTime.remove(index);
 
 			index--;
-
-			Data.currentTime.add(motion.calcTimeAtZeroHeight(Data.yVelocity, Data.currentTime, index, MOON_GRAVITY));
+			
+			Data.yVelocity.add(-(Math.sqrt(Math.pow(Data.yVelocity.get(0), 2) + (2 * -MOON_GRAVITY * 
+					Data.height.get(0)))));
+			
+			Data.currentTime.add(((Data.yVelocity.get(index + 1) - Data.yVelocity.get(0))/
+					MOON_GRAVITY));
 
 			timeIndex = index + 1;
 
