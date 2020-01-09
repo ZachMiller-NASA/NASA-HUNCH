@@ -448,14 +448,10 @@ public class SimDriver extends Application {
 				"Y Velocity(m/s)", "Angle of Fall");
 
 		// Distance of fall now at 0
-		for (int x = 0; x < Data.currentTime.size() - 1; x++) {
+		for (int x = 0; x < Data.currentTime.size(); x++) {
 			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", Data.currentTime.get(x), Data.height.get(x),
 					Data.distanceTraveled.get(x), Data.xVelocity.get(x), Data.yVelocity.get(x), Data.angleOfFall.get(x));
 		}
-
-		// how far will it roll
-		System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", Data.currentTime.get(Data.currentTime.size() - 1), 0.0,
-				Data.distanceTraveled.get(Data.currentTime.size() - 1), Data.xVelocity.get(Data.currentTime.size() - 1), 0.0, 0.0);
 	}
 
 	// centers the reports and the chart labels
