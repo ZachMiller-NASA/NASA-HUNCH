@@ -33,7 +33,7 @@ public class SimDriver extends Application {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start(Stage primaryStage) {
 		// title
-		primaryStage.setTitle("NASA Simulator");
+		primaryStage.setTitle("Lunar Supply Pod Simulator");
 		// window is not scalable
 		primaryStage.setResizable(false);
 		// Title labels 
@@ -51,8 +51,10 @@ public class SimDriver extends Application {
 				"Distance",
 				"Temperature",
 				"Force",
-				"Speed",
-				"Descent Angle"
+				"Velocity",
+				"Descent Angle",
+				"Kinetic Energy",
+				"Potential Energy"
 				);
 		final ComboBox xCombo = new ComboBox(options);
 		final ComboBox yCombo = new ComboBox(options);
@@ -68,17 +70,17 @@ public class SimDriver extends Application {
 		center(report);
 		//Labels for the left V Box
 		Label drop = new Label("Drop height");
-		Label spin = new Label("Spin speed");
+		Label regolith = new Label("Regolith depth");
 		Label initialYVel = new Label("Initial Y velocity");
 		Label initialXVel = new Label("Initial X velocity");
 		// Labels for entry type
 		Label meter = new Label("Meters");
-		Label rpm = new Label("rpm");
+		Label depth = new Label("Meters");
 		Label mpsOne = new Label("m/s");
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
-		Label temp = new Label("Max Temp(�C)");
-		temp.setPadding(reportPadding);
+		Label maxPotential = new Label("Max Potential Energy(kJ)");
+		maxPotential.setPadding(reportPadding);
 		Label force = new Label("Max Force(N)");
 		force.setPadding(reportPadding);
 		Label time = new Label("Time(sec)");
@@ -86,6 +88,8 @@ public class SimDriver extends Application {
 		Label survival = new Label("Pod Survival");
 		survival.setPadding(reportPadding);
 		
+		Label kinetic = new Label("Max Kinetic Energy (kJ)");
+		kinetic.setPadding(reportPadding);
 		Label impact = new Label("Angle of Impact");
 		impact.setPadding(reportPadding);
 		Label distance = new Label("Distance Travelled(m)");
@@ -114,9 +118,9 @@ public class SimDriver extends Application {
 		// drop height entry box
 		TextField dropHeight = new TextField();
 		txtSize(dropHeight);
-		// spin speed entry box
-		TextField spinSpeed = new TextField();  
-		txtSize(spinSpeed);
+		// regolith depth entry box
+		TextField regolithTxt = new TextField();  
+		txtSize(regolithTxt);
 		// initial y velocity entry box
 		TextField InitialY = new TextField();  
 		txtSize(InitialY);
@@ -126,8 +130,9 @@ public class SimDriver extends Application {
 		
 		
 		// the new information is stored in these
-		TextField tempBox = new TextField();
-		tempBox.setEditable(false);
+		
+		TextField potentialBox = new TextField();
+		potentialBox.setEditable(false);
 		
 		TextField forceBox = new TextField();
 		forceBox.setEditable(false);
@@ -137,6 +142,9 @@ public class SimDriver extends Application {
 		
 		TextField survivalBox = new TextField();
 		survivalBox.setEditable(false);
+		
+		TextField kineticBox = new TextField();
+		kineticBox.setEditable(false);
 		
 		TextField impactBox = new TextField();
 		impactBox.setEditable(false);
@@ -154,8 +162,8 @@ public class SimDriver extends Application {
 		// add the name of the variables into left inner
 		VBox leftInner = new VBox();
 		//leftInner.setStyle(cssLayout);
-		leftInner.getChildren().addAll(drop,spin,initialYVel,initialXVel);
-		space(leftInner,drop,spin,initialYVel,initialXVel);
+		leftInner.getChildren().addAll(drop,regolith,initialYVel,initialXVel);
+		space(leftInner,drop,regolith,initialYVel,initialXVel);
 		leftInner.setAlignment(Pos.CENTER_RIGHT);
 		leftInner.setMinWidth(130);
 		leftInner.setMaxWidth(130);
@@ -163,14 +171,14 @@ public class SimDriver extends Application {
 		// add the text fields into the inner Middle
 		VBox innerMiddle = new VBox();
 		//innerMiddle.setStyle(cssLayout);
-		innerMiddle.getChildren().addAll(dropHeight,spinSpeed,InitialY,InitialX);
-		space(innerMiddle,dropHeight,spinSpeed,InitialY,InitialX);
+		innerMiddle.getChildren().addAll(dropHeight,regolithTxt,InitialY,InitialX);
+		space(innerMiddle,dropHeight,regolithTxt,InitialY,InitialX);
 		innerMiddle.setMinWidth(130);
 		innerMiddle.setMaxWidth(130);
 		// contains the m/s etc.
 		VBox rightInner = new VBox();
-		rightInner.getChildren().addAll(meter,rpm,mpsOne,mpsTwo);
-		space(rightInner,meter,rpm,mpsOne,mpsTwo);
+		rightInner.getChildren().addAll(meter,depth,mpsOne,mpsTwo);
+		space(rightInner,meter,depth,mpsOne,mpsTwo);
 		//rightInner.setStyle(cssLayout);
 		rightInner.setMinWidth(70);
 		rightInner.setMaxWidth(70);
@@ -198,28 +206,28 @@ public class SimDriver extends Application {
 		reportTitle.getChildren().addAll(report);
 		
 		VBox topROne =new VBox(); 
-		topROne.getChildren().addAll(temp,force,time,survival);
+		topROne.getChildren().addAll(maxPotential,force,time,survival);
 		topROne.setStyle(cssLayout2);
 		
 		VBox topRTwo =new VBox();
-		topRTwo.getChildren().addAll(tempBox,forceBox,timeBox,survivalBox);
+		topRTwo.getChildren().addAll(potentialBox,forceBox,timeBox,survivalBox);
 		topRTwo.setStyle(cssLayout2);
-		VBox.setMargin(tempBox, reportTxtBoxPadding);
-		VBox.setMargin(timeBox, reportTxtBoxPadding);
-		VBox.setMargin(impactBox, reportTxtBoxPadding);
 		
 		VBox topRThree =new VBox(); 
-		topRThree.getChildren().addAll(impact,distance);
+		topRThree.getChildren().addAll(kinetic, impact,distance);
 		topRThree.setStyle(cssLayout2);
 		
 		VBox topRFour =new VBox();
 		
-		topRFour.getChildren().addAll(impactBox,distanceBox);
+		topRFour.getChildren().addAll(kineticBox, impactBox,distanceBox);
 		
 		topRFour.getChildren().addAll();
 		topRFour.setStyle(cssLayout2);
 		
-		VBox.setMargin(impactBox, reportTxtBoxPadding);
+		VBox.setMargin(potentialBox, reportTxtBoxPadding);
+		VBox.setMargin(timeBox, reportTxtBoxPadding);
+		VBox.setMargin(distanceBox, reportTxtBoxPadding);
+		VBox.setMargin(kineticBox, reportTxtBoxPadding);
 		
 		HBox holdTopRight = new HBox(topROne,topRTwo,topRThree,topRFour);
 		
@@ -325,7 +333,7 @@ public class SimDriver extends Application {
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
 		startBtn.setOnAction(e ->{ 
-			checkToCalc(dropHeight, spinSpeed, InitialY, InitialX);
+			checkToCalc(dropHeight, regolithTxt, InitialY, InitialX);
 			LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
 					Data.retrieve(yCombo.getValue()),
 					(String) xCombo.getValue(), (String) yCombo.getValue());
@@ -342,13 +350,14 @@ public class SimDriver extends Application {
 		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
 		
 			// clears the new boxes for a new set of data
-			tempBox.clear();
+			potentialBox.clear();
 			forceBox.clear();
 			timeBox.clear();
 			survivalBox.clear();
+			kineticBox.clear();
 			//clears data entry boxes
 			dropHeight.clear();
-			spinSpeed.clear();
+			regolithTxt.clear();
 			InitialX.clear();
 			InitialY.clear();
 			
@@ -368,20 +377,22 @@ public class SimDriver extends Application {
 			Data.distanceTraveled.clear();
 			Data.xVelocity.clear();
 			Data.yVelocity.clear();
+			Data.kineticEnergy.clear();
+			Data.potentialEnergy.clear();
 		});		
 	}
 
-	private void checkToCalc(TextField dropHeight, TextField spinSpeed, TextField yVelocityText,
+	private void checkToCalc(TextField dropHeight, TextField regolithText, TextField yVelocityText,
 			TextField xVelocityText) {
 		try {
 			double initialHeight = Double.parseDouble(dropHeight.getText());
-			double initialSpin = Double.parseDouble(spinSpeed.getText());
+			double regolith = Double.parseDouble(regolithText.getText());
 			double yVel = Double.parseDouble(yVelocityText.getText());
 			double xVel = Double.parseDouble(xVelocityText.getText());
 			if(initialHeight < yVel)
 				System.out.println("Y velocity can\'t be equal to or greater than height.");
 			else
-				calcProjectileMotion(initialHeight, initialSpin, yVel, xVel);
+				calcProjectileMotion(initialHeight, regolith, yVel, xVel);
 		} catch(InputMismatchException mismatch) {
 			System.out.println("Must be a number");
 		} catch(NumberFormatException numForm) {
@@ -390,7 +401,7 @@ public class SimDriver extends Application {
 		
 	}
 
-	private void calcProjectileMotion(double altitude, double spin, double yVel, double xVel) {
+	private void calcProjectileMotion(double altitude, double regolith, double yVel, double xVel) {
 		final double MOON_GRAVITY = -1.62;
 
 		ProjectileMotion motion = new ProjectileMotion();
