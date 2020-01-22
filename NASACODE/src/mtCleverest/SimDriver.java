@@ -333,6 +333,16 @@ public class SimDriver extends Application {
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
 		startBtn.setOnAction(e ->{ 
+			Data.currentTime.clear();
+			Data.angleOfFall.clear();
+			Data.height.clear();
+			Data.distanceTraveled.clear();
+			Data.xVelocity.clear();
+			Data.yVelocity.clear();
+			Data.kineticEnergy.clear();
+			Data.potentialEnergy.clear();
+			
+			
 			checkToCalc(dropHeight, regolithTxt, InitialY, InitialX);
 			LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
 					Data.retrieve(yCombo.getValue()),
