@@ -1,6 +1,5 @@
 package mtCleverest;
 
-import java.lang.Math;
 import java.util.ArrayList;
 
 public class Data {
@@ -12,6 +11,7 @@ public class Data {
 	public static ArrayList<Double> currentTime = new ArrayList<Double>();
 	public static ArrayList <Double> kineticEnergy = new ArrayList<Double>();
 	public static ArrayList <Double> potentialEnergy = new ArrayList<Double>();
+	public static ArrayList<Double> speed = new ArrayList<Double>();
 	
 	static ArrayList<Double> retrieve(Object request) {
 		if (request == "Altitude")
@@ -24,14 +24,8 @@ public class Data {
 			return currentTime; //CHANGE THIS WHEN WE HAVE TEMP
 		else if (request == "Force")
 			return currentTime; //CHANGE THIS WHEN WE HAVE FORCE
-		else if (request == "Speed") {
-			ArrayList<Double> speed = new ArrayList<Double>();
-			for (short count = 0; count < xVelocity.size(); count++) {
-				speed.add(Math.sqrt(Math.pow(xVelocity.get(count), 2)
-						+ Math.pow(yVelocity.get(count), 2)));
-			}
+		else if (request == "Speed") 
 			return speed;
-		}
 		else
 			return angleOfFall;
 	}
