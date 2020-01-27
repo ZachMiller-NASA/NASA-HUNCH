@@ -412,7 +412,7 @@ public class SimDriver extends Application {
 	}
 
 	private void calcProjectileMotion(double altitude, double regolith, double yVel, double xVel) {
-		final double MOON_GRAVITY = -1.62;
+		final double MOON_GRAVITY = -1.62, MASS = 3425.47117;
 
 		ProjectileMotion motion = new ProjectileMotion();
 
@@ -428,21 +428,25 @@ public class SimDriver extends Application {
 		Data.distanceTraveled.add(0.0);
 		Data.angleOfFall.add(motion.calcAngle(Data.xVelocity, Data.yVelocity, index));
 		Data.currentTime.add((double) index);
+		Data.speed.add(motion.calcSpeed(Data.xVelocity, Data.yVelocity, index));
+		Data.kineticEnergy.add(motion.calcKineticEnergy(MASS, Data.speed, index));
+		Data.potentialEnergy.add(motion.calcPotentialEnergy(MOON_GRAVITY, MASS, Data.height, index));
 
 		index++;
-		while (!closeToZero) {
-
+		while (!closeToZero) {	
+			
 			Data.currentTime.add((double) index);
-
-			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, 
-					Data.distanceTraveled, Data.height, Data.currentTime, index);
-
+			
+			motion.allCalcs(MOON_GRAVITY, MASS, Data.xVelocity, Data.yVelocity, Data.angleOfFall, 
+					Data.distanceTraveled, Data.height, Data.currentTime, Data.speed, 
+					Data.kineticEnergy, Data.potentialEnergy, index);
+			
 			closeToZero = (Data.height.get(index) < 0) ? true : false;
-
+			
 			index++;
 		}
 		index--;
-
+		
 		if (Data.height.get(index) != 0) {
 			Data.yVelocity.remove(index);
 			Data.xVelocity.remove(index);
@@ -450,28 +454,34 @@ public class SimDriver extends Application {
 			Data.height.remove(index);
 			Data.distanceTraveled.remove(index);
 			Data.currentTime.remove(index);
-
+			Data.kineticEnergy.remove(index);
+			Data.potentialEnergy.remove(index);
+			
 			index--;
 			
 			Data.yVelocity.add(-(Math.sqrt(Math.pow(Data.yVelocity.get(0), 2) + (2 * -MOON_GRAVITY * 
 					Data.height.get(0)))));
 			
-			Data.currentTime.add(((Data.yVelocity.get(index + 1) - Data.yVelocity.get(0))/
-					MOON_GRAVITY));
-
+			double lastTime = ((Data.yVelocity.get(index + 1) - Data.yVelocity.get(0))/MOON_GRAVITY);
+			Data.currentTime.add(lastTime);
 			timeIndex = index + 1;
+			
+			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, 
+					Data.distanceTraveled, Data.height, Data.currentTime, index, timeIndex);
+			Data.kineticEnergy.add(motion.calcKineticEnergy(MASS, Data.speed, timeIndex));
+			Data.potentialEnergy.add(0.0);
+	}
+		
+		System.out.printf("%5s%10s%12s%19s%19s%17s%18s%20s%n", "Time", "Height", "Distance",
+				"X Velocity(m/s)", "Y Velocity(m/s)", "Angle of Fall", "Kinetic Energy",
+				"Potential Energy");
 
-			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, Data.distanceTraveled, Data.height, Data.currentTime, index,
-					timeIndex);
-		}
-
-		System.out.printf("%5s%10s%12s%19s%19s%17s%n", "Time", "Height", "Distance", "X Velocity(m/s)",
-				"Y Velocity(m/s)", "Angle of Fall");
-
-		// Distance of fall now at 0
+		//Distance of fall now at 0
 		for (int x = 0; x < Data.currentTime.size(); x++) {
-			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%n", Data.currentTime.get(x), Data.height.get(x),
-					Data.distanceTraveled.get(x), Data.xVelocity.get(x), Data.yVelocity.get(x), Data.angleOfFall.get(x));
+			System.out.printf("%5.2f%10.2f%12.2f%19.2f%19.2f%17.2f%18.2f%20.2f%n",
+					Data.currentTime.get(x), Data.height.get(x), Data.distanceTraveled.get(x),
+					Data.xVelocity.get(x), Data.yVelocity.get(x), Data.angleOfFall.get(x), 
+					Data.kineticEnergy.get(x), Data.potentialEnergy.get(x));
 		}
 	}
 
