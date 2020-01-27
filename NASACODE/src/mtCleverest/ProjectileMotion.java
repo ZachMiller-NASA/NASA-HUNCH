@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 public class ProjectileMotion {
 	
-	/**
-	 * No - Arg Constructor
-	 */
 	public ProjectileMotion() {
 		
 	}
@@ -58,10 +55,8 @@ public class ProjectileMotion {
 			ArrayList<Double> distanceTraveled, ArrayList<Double> height, ArrayList<Double> time,
 			int index, int timeIndex) {
 		
-		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(timeIndex) - 
-				time.get(index)));
-		xVelocity.add(xVelocity.get(index - 1));
-		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
+		xVelocity.add(xVelocity.get(index-1));
+		angleOfFall.add(Math.toDegrees(Math.atan((yVelocity.get(timeIndex) / xVelocity.get(timeIndex)))));
 		height.add(calcDistance(yVelocity, height, time, index, timeIndex));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index, timeIndex));
 	}
@@ -99,8 +94,8 @@ public class ProjectileMotion {
 	 */
 	protected Double calcDistance(ArrayList<Double> velocity, ArrayList<Double> distanceTraveled,
 			ArrayList<Double> time, int index, int timeIndex) {
-		return (.5 * (velocity.get(index) + velocity.get(index - 1)) * (time.get(timeIndex) - 
-				time.get(index))) + distanceTraveled.get(index - 1);
+		return (.5 * (velocity.get(timeIndex) + velocity.get(index)) * (time.get(timeIndex) - 
+				time.get(index))) + distanceTraveled.get(index);
 	}
 	
 	/**
