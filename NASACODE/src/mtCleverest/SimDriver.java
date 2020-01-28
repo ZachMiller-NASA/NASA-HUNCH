@@ -70,12 +70,10 @@ public class SimDriver extends Application {
 		center(report);
 		//Labels for the left V Box
 		Label drop = new Label("Drop height");
-		Label regolith = new Label("Regolith depth");
 		Label initialYVel = new Label("Initial Y velocity");
 		Label initialXVel = new Label("Initial X velocity");
 		// Labels for entry type
 		Label meter = new Label("Meters");
-		Label depth = new Label("Meters");
 		Label mpsOne = new Label("m/s");
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
@@ -118,9 +116,6 @@ public class SimDriver extends Application {
 		// drop height entry box
 		TextField dropHeight = new TextField();
 		txtSize(dropHeight);
-		// regolith depth entry box
-		TextField regolithTxt = new TextField();  
-		txtSize(regolithTxt);
 		// initial y velocity entry box
 		TextField InitialY = new TextField();  
 		txtSize(InitialY);
@@ -162,8 +157,8 @@ public class SimDriver extends Application {
 		// add the name of the variables into left inner
 		VBox leftInner = new VBox();
 		//leftInner.setStyle(cssLayout);
-		leftInner.getChildren().addAll(drop,regolith,initialYVel,initialXVel);
-		space(leftInner,drop,regolith,initialYVel,initialXVel);
+		leftInner.getChildren().addAll(drop,initialYVel,initialXVel);
+		space(leftInner,drop,initialYVel,initialXVel);
 		leftInner.setAlignment(Pos.CENTER_RIGHT);
 		leftInner.setMinWidth(130);
 		leftInner.setMaxWidth(130);
@@ -171,14 +166,14 @@ public class SimDriver extends Application {
 		// add the text fields into the inner Middle
 		VBox innerMiddle = new VBox();
 		//innerMiddle.setStyle(cssLayout);
-		innerMiddle.getChildren().addAll(dropHeight,regolithTxt,InitialY,InitialX);
-		space(innerMiddle,dropHeight,regolithTxt,InitialY,InitialX);
+		innerMiddle.getChildren().addAll(dropHeight,InitialY,InitialX);
+		space(innerMiddle,dropHeight,InitialY,InitialX);
 		innerMiddle.setMinWidth(130);
 		innerMiddle.setMaxWidth(130);
 		// contains the m/s etc.
 		VBox rightInner = new VBox();
-		rightInner.getChildren().addAll(meter,depth,mpsOne,mpsTwo);
-		space(rightInner,meter,depth,mpsOne,mpsTwo);
+		rightInner.getChildren().addAll(meter,mpsOne,mpsTwo);
+		space(rightInner,meter,mpsOne, mpsTwo);
 		//rightInner.setStyle(cssLayout);
 		rightInner.setMinWidth(70);
 		rightInner.setMaxWidth(70);
@@ -343,7 +338,7 @@ public class SimDriver extends Application {
 			Data.potentialEnergy.clear();
 			
 			
-			checkToCalc(dropHeight, regolithTxt, InitialY, InitialX);
+			checkToCalc(dropHeight, InitialY, InitialX);
 			LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
 					Data.retrieve(yCombo.getValue()),
 					(String) xCombo.getValue(), (String) yCombo.getValue());
@@ -367,7 +362,6 @@ public class SimDriver extends Application {
 			kineticBox.clear();
 			//clears data entry boxes
 			dropHeight.clear();
-			regolithTxt.clear();
 			InitialX.clear();
 			InitialY.clear();
 			
@@ -392,17 +386,16 @@ public class SimDriver extends Application {
 		});		
 	}
 
-	private void checkToCalc(TextField dropHeight, TextField regolithText, TextField yVelocityText,
+	private void checkToCalc(TextField dropHeight, TextField yVelocityText,
 			TextField xVelocityText) {
 		try {
 			double initialHeight = Double.parseDouble(dropHeight.getText());
-			double regolith = Double.parseDouble(regolithText.getText());
 			double yVel = Double.parseDouble(yVelocityText.getText());
 			double xVel = Double.parseDouble(xVelocityText.getText());
 			if(initialHeight < yVel)
 				System.out.println("Y velocity can\'t be equal to or greater than height.");
 			else
-				calcProjectileMotion(initialHeight, regolith, yVel, xVel);
+				calcProjectileMotion(initialHeight, yVel, xVel);
 		} catch(InputMismatchException mismatch) {
 			System.out.println("Must be a number");
 		} catch(NumberFormatException numForm) {
@@ -411,7 +404,7 @@ public class SimDriver extends Application {
 		
 	}
 
-	private void calcProjectileMotion(double altitude, double regolith, double yVel, double xVel) {
+	private void calcProjectileMotion(double altitude, double yVel, double xVel) {
 		final double MOON_GRAVITY = -1.62, MASS = 3425.47117;
 
 		ProjectileMotion motion = new ProjectileMotion();
@@ -500,38 +493,36 @@ public class SimDriver extends Application {
 	public void txtSize(TextField t) {
 		t.setMinSize(125,20);
 	}
-	public void space(VBox t,Label a,Label b,Label c,Label d) {
-		final int TOP = 22;
+	
+	public void space(VBox t,Label a,Label b) {
+		final int TOP = 30;
 		final int RIGHT = 0;
-		final int BOTTOM = 20;
+		final int BOTTOM = 30;
 		final int LEFT = 5;
 		
 		VBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
 		VBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
-		VBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 	}
-	public void space(HBox t,Label a,Label b,Label c,Label d) {
-		final int TOP = 20;
-		final int RIGHT = 20;
-		final int BOTTOM = 20;
-		final int LEFT = 20;
-		
-		HBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		HBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		HBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		HBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-	}
-	public void space(VBox t,TextField a,TextField b,TextField c,TextField d) {
-		final int TOP = 20;
+	
+	public void space(VBox t,Label a,Label b, Label c) {
+		final int TOP = 30;
 		final int RIGHT = 0;
-		final int BOTTOM = 13;
+		final int BOTTOM = 30;
+		final int LEFT = 5;
+		
+		VBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM-2,LEFT));
+		VBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
+	}
+	public void space(VBox t,TextField a,TextField b,TextField c) {
+		final int TOP = 27;
+		final int RIGHT = 0;
+		final int BOTTOM = 23;
 		final int LEFT = 5;
 		
 		VBox.setMargin(a,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 		VBox.setMargin(b,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
-		VBox.setMargin(d,new Insets(TOP,RIGHT,BOTTOM-1,LEFT));
 	}
 	public void space(HBox t,TextField a,TextField b,TextField c,TextField d) {
 		final int TOP = 20;
@@ -606,6 +597,4 @@ public class SimDriver extends Application {
 			
 		return chart;
 	}
-	
-	
 }
