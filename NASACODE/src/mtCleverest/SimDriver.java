@@ -49,8 +49,6 @@ public class SimDriver extends Application {
 				"Altitude",
 				"Time",
 				"Distance",
-				"Temperature",
-				"Force",
 				"Velocity",
 				"Descent Angle",
 				"Kinetic Energy",
@@ -62,7 +60,7 @@ public class SimDriver extends Application {
 		yCombo.setValue("Altitude");
 		
 		//report padding
-		Insets reportPadding = new Insets(7, 0, 7, 0);
+		Insets reportPadding = new Insets(7, 0, 6, 0);
 		
 		//report stuff
 		Label report = new Label("Report");
@@ -79,12 +77,8 @@ public class SimDriver extends Application {
 		// Labels for the top right box
 		Label maxPotential = new Label("Max Potential Energy(kJ)");
 		maxPotential.setPadding(reportPadding);
-		Label force = new Label("Max Force(N)");
-		force.setPadding(reportPadding);
 		Label time = new Label("Time(sec)");
 		time.setPadding(reportPadding);
-		Label survival = new Label("Pod Survival");
-		survival.setPadding(reportPadding);
 		
 		Label kinetic = new Label("Max Kinetic Energy (kJ)");
 		kinetic.setPadding(reportPadding);
@@ -129,14 +123,8 @@ public class SimDriver extends Application {
 		TextField potentialBox = new TextField();
 		potentialBox.setEditable(false);
 		
-		TextField forceBox = new TextField();
-		forceBox.setEditable(false);
-		
 		TextField timeBox = new TextField();
 		timeBox.setEditable(false);
-		
-		TextField survivalBox = new TextField();
-		survivalBox.setEditable(false);
 		
 		TextField kineticBox = new TextField();
 		kineticBox.setEditable(false);
@@ -200,29 +188,26 @@ public class SimDriver extends Application {
 		HBox reportTitle = new HBox();
 		reportTitle.getChildren().addAll(report);
 		
-		VBox topROne =new VBox(); 
-		topROne.getChildren().addAll(maxPotential,force,time,survival);
+		VBox topROne =new VBox();
 		topROne.setStyle(cssLayout2);
 		
 		VBox topRTwo =new VBox();
-		topRTwo.getChildren().addAll(potentialBox,forceBox,timeBox,survivalBox);
 		topRTwo.setStyle(cssLayout2);
 		
 		VBox topRThree =new VBox(); 
-		topRThree.getChildren().addAll(kinetic, impact,distance);
+		topRThree.getChildren().addAll(kinetic, maxPotential, impact, distance, time);
 		topRThree.setStyle(cssLayout2);
 		
 		VBox topRFour =new VBox();
 		
-		topRFour.getChildren().addAll(kineticBox, impactBox,distanceBox);
+		topRFour.getChildren().addAll(kineticBox, potentialBox, impactBox, distanceBox, timeBox);
 		
 		topRFour.getChildren().addAll();
 		topRFour.setStyle(cssLayout2);
 		
-		VBox.setMargin(potentialBox, reportTxtBoxPadding);
 		VBox.setMargin(timeBox, reportTxtBoxPadding);
-		VBox.setMargin(distanceBox, reportTxtBoxPadding);
 		VBox.setMargin(kineticBox, reportTxtBoxPadding);
+		VBox.setMargin(impactBox, reportTxtBoxPadding);
 		
 		HBox holdTopRight = new HBox(topROne,topRTwo,topRThree,topRFour);
 		
@@ -349,16 +334,15 @@ public class SimDriver extends Application {
 					Data.distanceTraveled.get(Data.distanceTraveled.size()-1)));
 			timeBox.setText(String.format("%.2f", Data.currentTime.get(Data.currentTime.size()-1)));
 			impactBox.setText(String.format("%.2f", Data.angleOfFall.get(Data.angleOfFall.size()-1)));
-			
+			potentialBox.setText(String.format("%.2f", Data.potentialEnergy.get(0)));
+			kineticBox.setText(String.format("%.2f", Data.kineticEnergy.get(Data.kineticEnergy.size()-1)));
 		});
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
 		
 			// clears the new boxes for a new set of data
 			potentialBox.clear();
-			forceBox.clear();
 			timeBox.clear();
-			survivalBox.clear();
 			kineticBox.clear();
 			//clears data entry boxes
 			dropHeight.clear();
@@ -515,7 +499,7 @@ public class SimDriver extends Application {
 		VBox.setMargin(c,new Insets(TOP,RIGHT,BOTTOM,LEFT));
 	}
 	public void space(VBox t,TextField a,TextField b,TextField c) {
-		final int TOP = 27;
+		final int TOP = 28;
 		final int RIGHT = 0;
 		final int BOTTOM = 23;
 		final int LEFT = 5;
