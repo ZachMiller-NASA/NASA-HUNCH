@@ -20,10 +20,6 @@ public class Data {
 			return currentTime;
 		else if (request == "Distance")
 			return distanceTraveled;
-		else if (request == "Temperature")
-			return currentTime; //CHANGE THIS WHEN WE HAVE TEMP
-		else if (request == "Force")
-			return currentTime; //CHANGE THIS WHEN WE HAVE FORCE
 		else if (request == "Speed") 
 			return speed;
 		else
