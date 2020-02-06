@@ -313,29 +313,14 @@ public class SimDriver extends Application {
 		//WHEN THE START BUTTON IS PRESSED IT WILL CHECK THE VALUES AND THEN START OR
 		//ASK FOR VALUES IF THEY HAVEN'T ENTERED THEM OR THEY'RE INVALID
 		startBtn.setOnAction(e ->{ 
-			Data.currentTime.clear();
-			Data.angleOfFall.clear();
-			Data.height.clear();
-			Data.distanceTraveled.clear();
-			Data.xVelocity.clear();
-			Data.yVelocity.clear();
-			Data.kineticEnergy.clear();
-			Data.potentialEnergy.clear();
-			
-			
-			checkToCalc(dropHeight, InitialY, InitialX);
-			LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
-					Data.retrieve(yCombo.getValue()),
-					(String) xCombo.getValue(), (String) yCombo.getValue());
-			bottomRightRight.getChildren().remove(1);
-			bottomRightRight.getChildren().add(chartUpdate);
-			
-			distanceBox.setText(String.format("%.2f",
-					Data.distanceTraveled.get(Data.distanceTraveled.size()-1)));
-			timeBox.setText(String.format("%.2f", Data.currentTime.get(Data.currentTime.size()-1)));
-			impactBox.setText(String.format("%.2f", Data.angleOfFall.get(Data.angleOfFall.size()-1)));
-			potentialBox.setText(String.format("%.2f", Data.potentialEnergy.get(0)));
-			kineticBox.setText(String.format("%.2f", Data.kineticEnergy.get(Data.kineticEnergy.size()-1)));
+			Start(xCombo, yCombo, dropHeight, InitialY, InitialX, potentialBox, timeBox, kineticBox, impactBox,
+					distanceBox, bottomRightRight);
+		});
+		
+		scene.setOnKeyPressed(e ->{
+			enterkey( e,  xCombo,  yCombo,  dropHeight,  InitialY,
+					 InitialX,  potentialBox, timeBox,  kineticBox,  impactBox,
+					 distanceBox,  bottomRightRight);
 		});
 		
 		resetBtn.setOnAction(btnPress -> {// Sets the boxes equal to null and resets the graph
@@ -580,5 +565,44 @@ public class SimDriver extends Application {
 			
 			
 		return chart;
+	}
+	private static void Start(final ComboBox xCombo, final ComboBox yCombo, TextField dropHeight, TextField InitialY,
+			TextField InitialX, TextField potentialBox, TextField timeBox, TextField kineticBox, TextField impactBox,
+			TextField distanceBox, VBox bottomRightRight) {
+		Data.currentTime.clear();
+		Data.angleOfFall.clear();
+		Data.height.clear();
+		Data.distanceTraveled.clear();
+		Data.xVelocity.clear();
+		Data.yVelocity.clear();
+		Data.kineticEnergy.clear();
+		Data.potentialEnergy.clear();
+		
+		
+		checkToCalc(dropHeight, InitialY, InitialX);
+		LineChart chartUpdate = createChart(Data.retrieve(xCombo.getValue()),
+				Data.retrieve(yCombo.getValue()),
+				(String) xCombo.getValue(), (String) yCombo.getValue());
+		bottomRightRight.getChildren().remove(1);
+		bottomRightRight.getChildren().add(chartUpdate);
+		
+		distanceBox.setText(String.format("%.2f",
+				Data.distanceTraveled.get(Data.distanceTraveled.size()-1)));
+		timeBox.setText(String.format("%.2f", Data.currentTime.get(Data.currentTime.size()-1)));
+		impactBox.setText(String.format("%.2f", Data.angleOfFall.get(Data.angleOfFall.size()-1)));
+		potentialBox.setText(String.format("%.2f", Data.potentialEnergy.get(0)));
+		kineticBox.setText(String.format("%.2f", Data.kineticEnergy.get(Data.kineticEnergy.size()-1)));
+	}
+	public static void enterkey(KeyEvent e,final ComboBox xCombo, final ComboBox yCombo, TextField dropHeight, TextField InitialY,
+			TextField InitialX, TextField potentialBox, TextField timeBox, TextField kineticBox, TextField impactBox,
+			TextField distanceBox, VBox bottomRightRight ) {
+
+		if (e.getCode() == KeyCode.ENTER) {
+
+			Start(xCombo, yCombo, dropHeight, InitialY, InitialX, potentialBox, timeBox, kineticBox, impactBox,
+					distanceBox, bottomRightRight);
+
+		}
+
 	}
 }
