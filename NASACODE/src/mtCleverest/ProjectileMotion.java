@@ -31,7 +31,7 @@ public class ProjectileMotion {
 		yVelocity.add(yVelocity.get(index - 1) + MOON_GRAVITY * (time.get(index) - 
 				time.get(index - 1)));
 		xVelocity.add(xVelocity.get(index - 1));
-		angleOfFall.add(calcAngle(xVelocity, yVelocity, index));
+		angleOfFall.add(90 + (calcAngle(xVelocity, yVelocity, index)));
 		height.add(calcDistance(yVelocity, height, time, index));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index));
 		speed.add(calcSpeed(xVelocity, yVelocity, index));
@@ -56,7 +56,8 @@ public class ProjectileMotion {
 			int index, int timeIndex) {
 		
 		xVelocity.add(xVelocity.get(index-1));
-		angleOfFall.add(Math.toDegrees(Math.atan((yVelocity.get(timeIndex) / xVelocity.get(timeIndex)))));
+		angleOfFall.add(90 + (Math.toDegrees(Math.atan
+				((yVelocity.get(timeIndex) / xVelocity.get(timeIndex))))));
 		height.add(calcDistance(yVelocity, height, time, index, timeIndex));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index, timeIndex));
 	}
@@ -116,7 +117,7 @@ public class ProjectileMotion {
 	 * @return kinetic energy in kilojoules
 	 */
 	protected double calcKineticEnergy(final double MASS, ArrayList<Double> speed, int index) {
-		return .5*MASS*Math.pow(speed.get(index), 2);
+		return ((.5*MASS*Math.pow(speed.get(index), 2)) / 1000.0);
 	}
 	
 	/**
