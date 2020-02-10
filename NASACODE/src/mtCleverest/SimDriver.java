@@ -587,7 +587,9 @@ public class SimDriver extends Application {
 			
 		return chart;
 	}
-	private static void Start(final ComboBox xCombo, final ComboBox yCombo, TextField dropHeight, TextField InitialY,
+	
+	@SuppressWarnings("rawtypes")
+	private static void Start(final ComboBox<String> xCombo, final ComboBox <String> yCombo, TextField dropHeight, TextField InitialY,
 			TextField InitialX, TextField potentialBox, TextField timeBox, TextField kineticBox, TextField impactBox,
 			TextField distanceBox, VBox bottomRightRight) {
 		Data.currentTime.clear();
@@ -614,7 +616,8 @@ public class SimDriver extends Application {
 		potentialBox.setText(String.format("%.2f", Data.potentialEnergy.get(0)));
 		kineticBox.setText(String.format("%.2f", Data.kineticEnergy.get(Data.kineticEnergy.size()-1)));
 	}
-	public static void enterkey(KeyEvent e,final ComboBox xCombo, final ComboBox yCombo, TextField dropHeight, TextField InitialY,
+	
+	public static void enterkey(KeyEvent e,final ComboBox<String> xCombo, final ComboBox <String> yCombo, TextField dropHeight, TextField InitialY,
 			TextField InitialX, TextField potentialBox, TextField timeBox, TextField kineticBox, TextField impactBox,
 			TextField distanceBox, VBox bottomRightRight ) {
 
