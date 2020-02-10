@@ -17,6 +17,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -75,7 +77,7 @@ public class SimDriver extends Application {
 		Label mpsOne = new Label("m/s");
 		Label mpsTwo = new Label("m/s");
 		// Labels for the top right box
-		Label maxPotential = new Label("Max Potential Energy(kJ)");
+		Label maxPotential = new Label("Max Potential Energy (kJ)");
 		maxPotential.setPadding(reportPadding);
 		Label time = new Label("Time(sec)");
 		time.setPadding(reportPadding);
@@ -355,7 +357,7 @@ public class SimDriver extends Application {
 		});		
 	}
 
-	private void checkToCalc(TextField dropHeight, TextField yVelocityText,
+	private static void checkToCalc(TextField dropHeight, TextField yVelocityText,
 			TextField xVelocityText) {
 		try {
 			double initialHeight = Double.parseDouble(dropHeight.getText());
@@ -373,7 +375,7 @@ public class SimDriver extends Application {
 		
 	}
 
-	private void calcProjectileMotion(double altitude, double yVel, double xVel) {
+	private static void calcProjectileMotion(double altitude, double yVel, double xVel) {
 		final double MOON_GRAVITY = -1.62, MASS = 3425.47117;
 
 		ProjectileMotion motion = new ProjectileMotion();
@@ -511,7 +513,7 @@ public class SimDriver extends Application {
 	 * Used to create a LineChart based on the data sent to it
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private LineChart createChart(ArrayList<Double> xData, ArrayList<Double> yData,
+	private static LineChart createChart(ArrayList<Double> xData, ArrayList<Double> yData,
 			String xLabel, String yLabel) {
 		
 			//Initializing maxes & mins
@@ -532,20 +534,42 @@ public class SimDriver extends Application {
 				if (xMin > xData.get(count))
 					xMin = xData.get(count);
 			}
-			
+			//Padding for mins and maxes and making them pretty
+			if ((xMin < 1 && xMin > 0) || (xMin < 0 && xMax > -1))
+				xMin = 0;
+			if ((yMin < 1 && yMin > 0) || (yMin < 0 && yMax > -1))
+				yMin = 0;
+			if ((xMax < 1 && xMax > 0) || (xMax < 0 && xMax > -1))
+				xMax = 0;
+			if ((yMax < 1 && yMax > 0) || (yMax < 0 && yMax > -1))
+				yMax = 0;
+			xMax *= 1.1;
+			if (xMax > 100)
+				xMax = xMax - xMax % 10;
+			if (xMax > 1000)
+				xMax = xMax - xMax % 100;
+			if (xMax > 10000)
+				xMax = xMax - xMax % 1000;
+			if (xMax > 100000)
+				xMax = xMax - xMax % 10000;
+			yMax *= 1.1;
+			if (yMax > 100)
+				yMax = yMax - yMax % 10;
+			if (yMax > 1000)
+				yMax = yMax - yMax % 100;
+			if (yMax > 10000)
+				yMax = yMax - yMax % 1000;
+			if (yMax > 100000)
+				yMax = yMax - yMax % 10000;
+				
 			//Generating increments using data & adjusting minimums, maximums
 			double yIncrement = (int)((yMax - yMin) * (0.2));
 			double xIncrement = (int) ((xMax - xMin) * (0.1));
 			
-			//0 Adjustment
-			if (xMin < xMax * .2 && xMin > 0)
-				xMin = 0;
-			if (yMin < yMax * .2 && yMin > 0)
-				yMin = 0;
 			
 			//Defining axis
-			NumberAxis xAxis = new NumberAxis(xMin, xMax, xIncrement);
-			NumberAxis yAxis = new NumberAxis(yMin, yMax, yIncrement);
+			NumberAxis xAxis = new NumberAxis(Math.round(xMin), Math.round(xMax), xIncrement);
+			NumberAxis yAxis = new NumberAxis(Math.round(yMin), Math.round(yMax), yIncrement);
 			xAxis.setLabel(xLabel);
 			yAxis.setLabel(yLabel);
 			
@@ -560,9 +584,6 @@ public class SimDriver extends Application {
 			chart.getData().add(series);	
 			chart.setMinSize(465, 320);
 			chart.setMaxSize(465, 320);
-			
-			
-			
 			
 		return chart;
 	}
