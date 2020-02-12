@@ -2,10 +2,7 @@ package mtCleverest;
 
 import java.util.ArrayList;
 
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-
+// ALLOWS THE SIMDRIVER TO GET THE DATA
 public class Data {
 	public static ArrayList<Double> xVelocity = new ArrayList<Double>();
 	public static ArrayList<Double> yVelocity = new ArrayList<Double>();
@@ -17,6 +14,7 @@ public class Data {
 	public static ArrayList <Double> potentialEnergy = new ArrayList<Double>();
 	public static ArrayList<Double> speed = new ArrayList<Double>();
 	
+	// WHATEVER THE OBJECT REQUEST IT WILL RETURN
 	static ArrayList<Double> retrieve(Object request) {
 		if (request == "Altitude")
 			return height;
