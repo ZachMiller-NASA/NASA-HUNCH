@@ -52,13 +52,14 @@ public class ProjectileMotion {
 	 */
 	protected void allCalcs(final double MOON_GRAVITY, ArrayList<Double> xVelocity, 
 			ArrayList<Double> yVelocity, ArrayList<Double> angleOfFall,
-			ArrayList<Double> distanceTraveled, ArrayList<Double> height, ArrayList<Double> time,
-			int index, int timeIndex) {
+			ArrayList<Double> distanceTraveled, ArrayList<Double> height, ArrayList<Double> time, 
+			ArrayList<Double> speed, int index, int timeIndex) {
 		
 		xVelocity.add(xVelocity.get(index-1));
 		angleOfFall.add(90 + (Math.toDegrees(Math.atan
 				((yVelocity.get(timeIndex) / xVelocity.get(timeIndex))))));
 		height.add(calcDistance(yVelocity, height, time, index, timeIndex));
+		speed.add(calcSpeed(xVelocity, yVelocity, timeIndex));
 		distanceTraveled.add(calcDistance(xVelocity, distanceTraveled, time, index, timeIndex));
 	}
 	
