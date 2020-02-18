@@ -69,8 +69,8 @@ public class SimDriver extends Application {
 		String cssLayout = "-fx-border-color: black;\n" + "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
 				+ "-fx-border-style: solid;\n";
 		// creating combo boxes for chart
-		ObservableList<String> options = FXCollections.observableArrayList("Altitude", "Time", "Distance", "Velocity",
-				"Descent Angle", "Kinetic Energy", "Potential Energy");
+		ObservableList<String> options = FXCollections.observableArrayList("Altitude", "Time",
+				"Distance", "Velocity", "Descent Angle", "Kinetic Energy", "Potential Energy");
 		final ComboBox xCombo = new ComboBox(options);
 		final ComboBox yCombo = new ComboBox(options);
 		xCombo.setValue("Time");
@@ -332,8 +332,6 @@ public class SimDriver extends Application {
 		startBtn.setOnAction(e -> {
 			Start(xCombo, yCombo, dropHeight, InitialY, InitialX, potentialBox, timeBox, kineticBox, impactBox,
 					distanceBox, bottomRightRight);
-		
-		
 		});
 
 		databaseBtn.setOnAction(e -> {
@@ -499,6 +497,7 @@ public class SimDriver extends Application {
 			Data.distanceTraveled.clear();
 			Data.xVelocity.clear();
 			Data.yVelocity.clear();
+			Data.speed.clear();
 			Data.kineticEnergy.clear();
 			Data.potentialEnergy.clear();
 		});
@@ -558,7 +557,7 @@ public class SimDriver extends Application {
 
 		Data.height.add(altitude);
 		Data.distanceTraveled.add(0.0);
-		Data.angleOfFall.add(motion.calcAngle(Data.xVelocity, Data.yVelocity, index));
+		Data.angleOfFall.add(motion.calcAngle(Data.xVelocity, Data.yVelocity, index) + 90);
 		Data.currentTime.add((double) index);
 		Data.speed.add(motion.calcSpeed(Data.xVelocity, Data.yVelocity, index));
 		Data.kineticEnergy.add(motion.calcKineticEnergy(MASS, Data.speed, index));
@@ -587,6 +586,7 @@ public class SimDriver extends Application {
 			Data.height.remove(index);
 			Data.distanceTraveled.remove(index);
 			Data.currentTime.remove(index);
+			Data.speed.remove(index);
 			Data.kineticEnergy.remove(index);
 			Data.potentialEnergy.remove(index);
 
@@ -601,7 +601,7 @@ public class SimDriver extends Application {
 			timeIndex = index + 1;
 
 			motion.allCalcs(MOON_GRAVITY, Data.xVelocity, Data.yVelocity, Data.angleOfFall, Data.distanceTraveled,
-					Data.height, Data.currentTime, index, timeIndex);
+					Data.height, Data.currentTime, Data.speed, index, timeIndex);
 			Data.kineticEnergy.add(motion.calcKineticEnergy(MASS, Data.speed, timeIndex));
 			Data.potentialEnergy.add(0.0);
 		}
@@ -698,6 +698,8 @@ public class SimDriver extends Application {
 		if ((xMin < 1 && xMin > 0) || (xMin < 0 && xMax > -1))
 			xMin = 0;
 		if ((yMin < 1 && yMin > 0) || (yMin < 0 && yMax > -1))
+			yMin = 0;
+		if ((yMin < 50))
 			yMin = 0;
 		if ((xMax < 1 && xMax > 0) || (xMax < 0 && xMax > -1))
 			xMax = 0;
